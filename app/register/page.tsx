@@ -74,7 +74,7 @@ export default function RegisterPage() {
               </div>
             ))}
           </div>
-          <p className="text-white/80 text-sm">Bergabunglah dengan ribuan pelanggan puas RentAja.</p>
+          <p className="text-white/80 text-sm">Bergabunglah dengan ribuan pelanggan puas Rentino.</p>
         </div>
       </div>
 
@@ -86,7 +86,7 @@ export default function RegisterPage() {
               <Car className="w-4 h-4 text-white" />
             </div>
             <span className="font-semibold text-lg text-slate-900 dark:text-white">
-              Rent<span className="text-blue-600">Aja</span>
+              Rent<span className="text-blue-600">ino</span>
             </span>
           </Link>
 

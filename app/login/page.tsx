@@ -113,7 +113,7 @@ export default function LoginPage() {
               <Car className="w-4 h-4 text-white" />
             </div>
             <span className="font-semibold text-lg text-slate-900 dark:text-white">
-              Rent<span className="text-blue-600">Aja</span>
+              Rent<span className="text-blue-600">ino</span>
             </span>
           </Link>
 
@@ -147,7 +147,7 @@ export default function LoginPage() {
           <p className="text-white text-xl font-semibold mb-2">
             &ldquo;Pengalaman sewa mobil yang menyenangkan dan terpercaya&rdquo;
           </p>
-          <p className="text-white/60 text-sm">— RentAja Customer Review</p>
+          <p className="text-white/60 text-sm">— Rentino Customer Review</p>
         </div>
       </div>
     </div>

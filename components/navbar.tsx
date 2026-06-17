@@ -63,7 +63,7 @@ export default function Navbar() {
               'font-semibold text-lg tracking-tight transition-colors',
               scrolled || !isHome ? 'text-slate-900 dark:text-white' : 'text-white'
             )}>
-              Rent<span className="text-blue-400">Aja</span>
+              Ren<span className="text-blue-400">Tino</span>
             </span>
           </Link>
 

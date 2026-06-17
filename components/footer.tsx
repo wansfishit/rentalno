@@ -13,7 +13,7 @@ export default function Footer() {
                 <Car className="w-4 h-4 text-white" />
               </div>
               <span className="font-semibold text-lg text-white tracking-tight">
-                Rent<span className="text-blue-400">Aja</span>
+                Rent<span className="text-blue-400">ino</span>
               </span>
             </Link>
             <p className="text-sm leading-relaxed mb-6 text-slate-500">
@@ -101,7 +101,7 @@ export default function Footer() {
               </li>
               <li className="flex items-start gap-3">
                 <Mail className="w-4 h-4 text-blue-400 mt-0.5 shrink-0" />
-                <span>hello@rentaja.id</span>
+                <span>hello@rentino.id</span>
               </li>
             </ul>
           </div>
@@ -109,7 +109,7 @@ export default function Footer() {
 
         <div className="border-t border-slate-800 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-slate-600">
-            &copy; {new Date().getFullYear()} RentAja. All rights reserved.
+            &copy; {new Date().getFullYear()} Rentino. All rights reserved.
           </p>
           <div className="flex items-center gap-6 text-sm">
             <Link href="#" className="text-slate-600 hover:text-white transition-colors">Kebijakan Privasi</Link>

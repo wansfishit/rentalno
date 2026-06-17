@@ -9,22 +9,22 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
   title: {
-    default: 'RentAja — Sewa Mobil Online Terpercaya',
-    template: '%s | RentAja',
+    default: 'Rentino — Sewa Mobil Online Terpercaya',
+    template: '%s | Rentino',
   },
   description:
     'Sewa mobil online dengan harga terbaik. Pilihan armada lengkap, proses mudah, dan layanan 24 jam. Toyota, Honda, BMW, Mercedes dan lainnya.',
   keywords: ['rental mobil', 'sewa mobil', 'car rental', 'mobil murah', 'sewa mobil online'],
-  authors: [{ name: 'RentAja' }],
+  authors: [{ name: 'Rentino' }],
   openGraph: {
-    title: 'RentAja — Sewa Mobil Online Terpercaya',
+    title: 'Rentino — Sewa Mobil Online Terpercaya',
     description: 'Sewa mobil online dengan harga terbaik.',
     type: 'website',
     locale: 'id_ID',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'RentAja — Sewa Mobil Online Terpercaya',
+    title: 'Rentino — Sewa Mobil Online Terpercaya',
   },
 };
 
