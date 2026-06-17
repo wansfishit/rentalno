@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 215 25% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 8%;
+    --primary: 214 84% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 16% 96%;
+    --secondary-foreground: 215 25% 20%;
+    --muted: 210 16% 96%;
+    --muted-foreground: 215 16% 46%;
+    --accent: 214 84% 96%;
+    --accent-foreground: 214 84% 35%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 214 20% 91%;
+    --input: 214 20% 91%;
+    --ring: 214 84% 50%;
+    --radius: 0.625rem;
+
+    --chart-1: 214 84% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+
+    --sidebar-bg: 215 25% 8%;
+    --sidebar-text: 210 20% 85%;
+    --sidebar-active: 214 84% 50%;
+  }
+
+  .dark {
+    --background: 222 16% 8%;
+    --foreground: 210 20% 95%;
+    --card: 222 16% 10%;
+    --card-foreground: 210 20% 95%;
+    --popover: 222 16% 10%;
+    --popover-foreground: 210 20% 95%;
+    --primary: 214 84% 56%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 222 16% 14%;
+    --secondary-foreground: 210 20% 85%;
+    --muted: 222 16% 14%;
+    --muted-foreground: 215 16% 56%;
+    --accent: 214 30% 18%;
+    --accent-foreground: 214 84% 70%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 222 16% 18%;
+    --input: 222 16% 18%;
+    --ring: 214 84% 56%;
+
+    --chart-1: 214 84% 60%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .glass {
+    @apply backdrop-blur-md bg-white/70 dark:bg-slate-900/70;
+  }
+}
