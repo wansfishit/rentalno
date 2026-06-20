@@ -1,42 +1,39 @@
 import Link from 'next/link';
-import { Car, Instagram, Phone, MapPin, Mail } from 'lucide-react';
+import { Instagram, Phone, MapPin, Mail } from 'lucide-react';
+import Logo from '@/components/logo';
 
 export default function Footer() {
   return (
-    <footer className="bg-slate-950 text-slate-400">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+    <footer className="bg-black border-t border-zinc-900 text-zinc-400">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-12 lg:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+          
           {/* Brand */}
-          <div className="lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Car className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-semibold text-lg text-white tracking-tight">
-                Rent<span className="text-blue-400">ino</span>
-              </span>
+          <div className="space-y-6">
+            <Link href="/" className="inline-block group">
+              <Logo size="sm" variant="blue" textClassName="text-white" />
             </Link>
-            <p className="text-sm leading-relaxed mb-6 text-slate-500">
-              Platform sewa mobil terpercaya dengan armada lengkap dan proses mudah. Perjalanan nyaman dimulai di sini.
+            <p className="text-sm leading-relaxed mb-6 text-zinc-500 font-light">
+              Platform sewa mobil eksklusif dengan armada terbaik dan proses instan. Perjalanan mewah Anda dimulai di sini.
             </p>
             <div className="flex items-center gap-3">
               <a
                 href="https://wa.me/6281378821654"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 bg-slate-800 hover:bg-green-600 rounded-lg flex items-center justify-center transition-colors group"
+                className="w-10 h-10 bg-zinc-900 hover:bg-white rounded-full flex items-center justify-center transition-colors group"
                 aria-label="WhatsApp"
               >
-                <Phone className="w-4 h-4 text-slate-400 group-hover:text-white" />
+                <Phone className="w-4 h-4 text-zinc-400 group-hover:text-black" />
               </a>
               <a
                 href="https://instagram.com/R1STNO"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 bg-slate-800 hover:bg-pink-600 rounded-lg flex items-center justify-center transition-colors group"
+                className="w-10 h-10 bg-zinc-900 hover:bg-white rounded-full flex items-center justify-center transition-colors group"
                 aria-label="Instagram"
               >
-                <Instagram className="w-4 h-4 text-slate-400 group-hover:text-white" />
+                <Instagram className="w-4 h-4 text-zinc-400 group-hover:text-black" />
               </a>
             </div>
           </div>
@@ -84,36 +81,36 @@ export default function Footer() {
             <h4 className="text-sm font-semibold text-white mb-4">Kontak</h4>
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-3">
-                <Phone className="w-4 h-4 text-blue-400 mt-0.5 shrink-0" />
+                <Phone className="w-4 h-4 text-zinc-500 mt-0.5 shrink-0" />
                 <a href="https://wa.me/6281378821654" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
                   +62 813-7882-1654
                 </a>
               </li>
               <li className="flex items-start gap-3">
-                <Instagram className="w-4 h-4 text-blue-400 mt-0.5 shrink-0" />
+                <Instagram className="w-4 h-4 text-zinc-500 mt-0.5 shrink-0" />
                 <a href="https://instagram.com/R1STNO" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
                   @R1STNO
                 </a>
               </li>
               <li className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-blue-400 mt-0.5 shrink-0" />
+                <MapPin className="w-4 h-4 text-zinc-500 mt-0.5 shrink-0" />
                 <span>Jakarta, Indonesia</span>
               </li>
               <li className="flex items-start gap-3">
-                <Mail className="w-4 h-4 text-blue-400 mt-0.5 shrink-0" />
-                <span>hello@rentino.id</span>
+                <Mail className="w-4 h-4 text-zinc-500 mt-0.5 shrink-0" />
+                <span>hello@rentalno.id</span>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-slate-800 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-slate-600">
-            &copy; {new Date().getFullYear()} Rentino. All rights reserved.
+        <div className="border-t border-zinc-900 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-zinc-600">
+            &copy; {new Date().getFullYear()} Rentalno. All rights reserved.
           </p>
           <div className="flex items-center gap-6 text-sm">
-            <Link href="#" className="text-slate-600 hover:text-white transition-colors">Kebijakan Privasi</Link>
-            <Link href="#" className="text-slate-600 hover:text-white transition-colors">Syarat & Ketentuan</Link>
+            <Link href="#" className="text-zinc-600 hover:text-white transition-colors">Kebijakan Privasi</Link>
+            <Link href="#" className="text-zinc-600 hover:text-white transition-colors">Syarat & Ketentuan</Link>
           </div>
         </div>
       </div>

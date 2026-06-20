@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  Users, Fuel, Settings, Star, Check, ArrowLeft, Loader2, Calendar
+  Users, Fuel, Settings, Star, Check, ArrowLeft, Loader2, Calendar, MapPin
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { getCarById } from '@/services/cars';
@@ -20,6 +20,14 @@ export default function CarDetailPage({ params }: { params: { id: string } }) {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [notes, setNotes] = useState('');
+  
+  // Guest Details
+  const [guestName, setGuestName] = useState('');
+  const [guestPhone, setGuestPhone] = useState('');
+  const [guestAddress, setGuestAddress] = useState('');
+  const [guestLocation, setGuestLocation] = useState('');
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
+  
   const { user } = useAuth();
   const router = useRouter();
 
@@ -43,14 +51,47 @@ export default function CarDetailPage({ params }: { params: { id: string } }) {
         )
       : 0;
 
-  const totalPrice = car ? totalDays * car.price_per_day : 0;
+  let basePrice = car ? totalDays * car.price_per_day : 0;
+  // Apply 10% discount if user is logged in
+  const isMember = !!user;
+  const discountAmount = isMember ? basePrice * 0.10 : 0;
+  const totalPrice = basePrice - discountAmount;
 
-  const handleBook = async () => {
-    if (!user) {
-      toast.error('Silakan masuk terlebih dahulu');
-      router.push(`/login?redirect=/cars/${params.id}`);
+  const handleGetLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error('Browser Anda tidak mendukung fitur lokasi');
       return;
     }
+
+    setIsGettingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setGuestLocation(`https://maps.google.com/?q=${latitude},${longitude}`);
+        setIsGettingLocation(false);
+        toast.success('Lokasi otomatis berhasil didapatkan!');
+      },
+      (error) => {
+        setIsGettingLocation(false);
+        if (error.code === error.PERMISSION_DENIED) {
+          toast.error('Gagal mendapat lokasi otomatis. Silakan izinkan akses GPS di pengaturan browser/HP Anda lalu ketuk tombol lokasi secara manual.');
+        } else {
+          toast.error('Gagal mendapatkan lokasi. Pastikan GPS Anda aktif.');
+        }
+      },
+      { timeout: 10000, maximumAge: 0, enableHighAccuracy: true }
+    );
+  };
+
+  // Automatically request GPS location on mount if user is a guest
+  useEffect(() => {
+    // Only attempt if we have loaded the auth state and user is not a member
+    if (!user && !guestLocation && !isGettingLocation) {
+      handleGetLocation();
+    }
+  }, [user]);
+
+  const handleBook = async () => {
     if (!startDate || !endDate) {
       toast.error('Pilih tanggal sewa terlebih dahulu');
       return;
@@ -63,19 +104,32 @@ export default function CarDetailPage({ params }: { params: { id: string } }) {
       toast.error('Mobil tidak tersedia saat ini');
       return;
     }
+    if (!isMember && (!guestName || !guestPhone || !guestAddress || !guestLocation)) {
+      toast.error('Mohon lengkapi semua data diri (Nama, WA, Alamat, ShareLoc) untuk melanjutkan');
+      return;
+    }
 
     setBookingLoading(true);
     try {
       await createBooking({
         car_id: params.id,
+        user_id: user?.id,
         start_date: startDate,
         end_date: endDate,
         total_days: totalDays,
         total_price: totalPrice,
         notes: notes || null,
+        guest_name: isMember ? user?.user_metadata?.full_name : guestName,
+        guest_phone: guestPhone,
+        guest_address: guestAddress,
+        guest_location: guestLocation,
       });
-      toast.success('Booking berhasil! Tim kami akan segera mengkonfirmasi.');
-      router.push('/profile');
+      toast.success('Booking berhasil! Tim kami akan segera menghubungi via WhatsApp.');
+      if (isMember) {
+        router.push('/profile');
+      } else {
+        router.push('/cars');
+      }
     } catch (err: any) {
       toast.error(err.message || 'Gagal membuat booking');
     } finally {
@@ -260,22 +314,100 @@ export default function CarDetailPage({ params }: { params: { id: string } }) {
                 />
               </div>
 
+              {/* Data Diri (Guest or Optional override for Member) */}
+              <div className="border-t border-slate-200 dark:border-slate-700 pt-4 mt-4 space-y-4">
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Data Diri & Pengiriman</h3>
+                
+                {!isMember && (
+                  <div className="bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 text-xs p-3 rounded-lg border border-blue-200 dark:border-blue-800/30">
+                    <p className="font-semibold mb-1">Anda booking sebagai Guest.</p>
+                    <p>Daftar/Login sekarang untuk mendapatkan <strong>Diskon 10%</strong> otomatis di setiap booking!</p>
+                  </div>
+                )}
+
+                {!isMember && (
+                  <>
+                    <div>
+                      <input
+                        type="text"
+                        value={guestName}
+                        onChange={(e) => setGuestName(e.target.value)}
+                        placeholder="Nama Lengkap"
+                        className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </>
+                )}
+
+                <div>
+                  <input
+                    type="text"
+                    value={guestPhone}
+                    onChange={(e) => setGuestPhone(e.target.value)}
+                    placeholder="Nomor WhatsApp"
+                    className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <textarea
+                    value={guestAddress}
+                    onChange={(e) => setGuestAddress(e.target.value)}
+                    rows={2}
+                    placeholder="Alamat Lengkap Pengiriman Mobil"
+                    className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={guestLocation}
+                      onChange={(e) => setGuestLocation(e.target.value)}
+                      placeholder="Koordinat Titik Lokasi"
+                      className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleGetLocation}
+                      disabled={isGettingLocation}
+                      className="shrink-0 px-4 flex items-center justify-center bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
+                      title="Ambil Lokasi Saat Ini (GPS)"
+                    >
+                      {isGettingLocation ? (
+                        <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
+                      ) : (
+                        <MapPin className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                      )}
+                    </button>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-1.5 ml-1">Ketuk ikon di sebelah kanan untuk mendeteksi lokasi otomatis via GPS.</p>
+                </div>
+              </div>
+
               {/* Price breakdown */}
               {totalDays > 0 && (
                 <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-600 dark:text-slate-400">
-                      {formatCurrency(car.price_per_day)} × {totalDays} hari
-                    </span>
-                    <span className="text-slate-900 dark:text-white font-medium">
-                      {formatCurrency(totalPrice)}
-                    </span>
+                     <span className="text-slate-600 dark:text-slate-400">
+                       {formatCurrency(car.price_per_day)} × {totalDays} hari
+                     </span>
+                     <span className="text-slate-900 dark:text-white font-medium">
+                       {formatCurrency(basePrice)}
+                     </span>
                   </div>
+                  
+                  {isMember && (
+                    <div className="flex justify-between text-sm text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-50 dark:bg-emerald-900/20 p-2 rounded-lg -mx-2 px-2">
+                      <span>Promo Member (10%)</span>
+                      <span>-{formatCurrency(discountAmount)}</span>
+                    </div>
+                  )}
+
                   <div className="border-t border-slate-200 dark:border-slate-700 pt-2 flex justify-between">
-                    <span className="font-semibold text-slate-900 dark:text-white">Total</span>
-                    <span className="font-bold text-blue-600 dark:text-blue-400 text-lg">
-                      {formatCurrency(totalPrice)}
-                    </span>
+                     <span className="font-semibold text-slate-900 dark:text-white">Total</span>
+                     <span className="font-bold text-blue-600 dark:text-blue-400 text-lg">
+                       {formatCurrency(totalPrice)}
+                     </span>
                   </div>
                 </div>
               )}

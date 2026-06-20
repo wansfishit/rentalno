@@ -28,8 +28,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (profile) {
-      setFullName(profile.full_name || '');
-      setPhone(profile.phone || '');
+      setFullName((profile as any).username || '');
     }
   }, [profile]);
 
@@ -45,7 +44,7 @@ export default function ProfilePage() {
     if (!user) return;
     setSaving(true);
     try {
-      await updateProfile(user.id, { full_name: fullName, phone });
+      await updateProfile(user.id, { username: fullName } as any);
       await refreshProfile();
       toast.success('Profil berhasil diperbarui');
     } catch {
@@ -85,11 +84,11 @@ export default function ProfilePage() {
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
         <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl font-bold">
-          {(profile?.full_name || user?.email || 'U')[0].toUpperCase()}
+          {((profile as any)?.username || user?.email || 'U')[0].toUpperCase()}
         </div>
         <div>
           <h1 className="text-xl font-bold text-slate-900 dark:text-white">
-            {profile?.full_name || 'Pengguna'}
+            {(profile as any)?.username || 'Pengguna'}
           </h1>
           <p className="text-slate-500 dark:text-slate-400 text-sm">{user?.email}</p>
         </div>
@@ -223,21 +222,7 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                Nomor HP
-              </label>
-              <div className="relative">
-                <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+62 8xx-xxxx-xxxx"
-                  className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                />
-              </div>
-            </div>
+
 
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">

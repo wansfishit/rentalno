@@ -76,13 +76,93 @@ export default function AdminBookingsPage() {
         ))}
       </div>
 
-      {/* Table */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+      {/* Mobile Card Layout */}
+      <div className="md:hidden space-y-4">
+        {loading ? (
+          [...Array(3)].map((_, i) => (
+            <div key={i} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 animate-pulse">
+              <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4 mb-3" />
+              <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/2" />
+            </div>
+          ))
+        ) : bookings.length === 0 ? (
+          <div className="text-center py-12 text-slate-400 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+            Tidak ada booking ditemukan
+          </div>
+        ) : (
+          bookings.map((booking) => (
+            <div key={booking.id} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 space-y-3 shadow-sm">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    {booking.guest_name || (booking as any).profile?.username || 'Guest'}
+                    {!booking.user_id && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 font-medium">
+                        GUEST
+                      </span>
+                    )}
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    WA: {booking.guest_phone || '—'}
+                  </p>
+                </div>
+                <span className={`text-[10px] font-medium px-2 py-1 rounded-full ${getStatusColor(booking.status)}`}>
+                  {getStatusLabel(booking.status)}
+                </span>
+              </div>
+              
+              <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-3 text-sm">
+                <p className="font-semibold text-slate-900 dark:text-white mb-1">
+                  {booking.car?.brand} {booking.car?.model}
+                </p>
+                <div className="flex justify-between text-slate-500 dark:text-slate-400 text-xs">
+                  <span>{formatDateShort(booking.start_date)} - {formatDateShort(booking.end_date)}</span>
+                  <span>{booking.total_days} hari</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-1">
+                <span className="font-bold text-slate-900 dark:text-white">
+                  {formatCurrency(booking.total_price)}
+                </span>
+                <select
+                  value={booking.status}
+                  onChange={(e) => handleStatusChange(booking.id, e.target.value as BookingStatus)}
+                  className="text-xs px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                >
+                  <option value="pending">Menunggu</option>
+                  <option value="confirmed">Konfirmasi</option>
+                  <option value="completed">Selesai</option>
+                  <option value="cancelled">Batalkan</option>
+                </select>
+              </div>
+              
+              {(booking.guest_address || booking.guest_location) && (
+                <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-1">
+                  {booking.guest_address && (
+                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                      📍 {booking.guest_address}
+                    </p>
+                  )}
+                  {booking.guest_location && (
+                    <a href={booking.guest_location} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">
+                      🔗 Buka ShareLoc
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Desktop Table Layout */}
+      <div className="hidden md:block bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-slate-100 dark:border-slate-800">
-                {['Pengguna', 'Mobil', 'Tanggal', 'Total', 'Status', 'Aksi'].map((h) => (
+                {['Pengguna & Kontak', 'Mobil', 'Tanggal', 'Total', 'Status', 'Aksi'].map((h) => (
                   <th key={h} className="text-left px-4 py-3.5 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide whitespace-nowrap">
                     {h}
                   </th>
@@ -111,12 +191,29 @@ export default function AdminBookingsPage() {
                   <tr key={booking.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                     <td className="px-4 py-3">
                       <div>
-                        <p className="text-sm font-medium text-slate-900 dark:text-white">
-                          {(booking as any).profile?.full_name || 'Pengguna'}
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-medium text-slate-900 dark:text-white">
+                            {booking.guest_name || (booking as any).profile?.username || 'Guest'}
+                          </p>
+                          {!booking.user_id && (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 font-medium">
+                              GUEST
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                          WA: {booking.guest_phone || '—'}
                         </p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">
-                          {(booking as any).profile?.phone || '—'}
-                        </p>
+                        {booking.guest_address && (
+                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-[200px] truncate" title={booking.guest_address}>
+                            📍 {booking.guest_address}
+                          </p>
+                        )}
+                        {booking.guest_location && (
+                          <a href={booking.guest_location} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline mt-1 inline-block">
+                            🔗 Buka ShareLoc
+                          </a>
+                        )}
                       </div>
                     </td>
                     <td className="px-4 py-3">

@@ -2,16 +2,26 @@ import { supabase } from '@/lib/supabase';
 import type { Booking, BookingStatus } from '@/types';
 
 export async function createBooking(
-  data: Pick<Booking, 'car_id' | 'start_date' | 'end_date' | 'total_days' | 'total_price' | 'notes'>
-): Promise<Booking> {
-  const { data: booking, error } = await supabase
+  data: Pick<Booking, 'car_id' | 'start_date' | 'end_date' | 'total_days' | 'total_price' | 'notes'> & {
+    user_id?: string;
+    guest_name?: string;
+    guest_phone?: string;
+    guest_address?: string;
+    guest_location?: string;
+  }
+): Promise<void> {
+  if (data.user_id) {
+    await supabase.from('profiles').upsert({ 
+      id: data.user_id,
+      username: data.guest_name || 'User'
+    }, { onConflict: 'id' });
+  }
+
+  const { error } = await supabase
     .from('bookings')
-    .insert(data)
-    .select('*, car:cars(*)')
-    .single();
+    .insert(data);
 
   if (error) throw error;
-  return booking as Booking;
 }
 
 export async function getUserBookings(userId: string): Promise<Booking[]> {
@@ -32,7 +42,7 @@ export async function getAllBookings(
 ): Promise<{ bookings: Booking[]; total: number }> {
   let query = supabase
     .from('bookings')
-    .select('*, car:cars(*), profile:profiles(full_name, phone)', { count: 'exact' });
+    .select('*, car:cars(*), profile:profiles(username)', { count: 'exact' });
 
   if (status && status !== 'all') {
     query = query.eq('status', status);

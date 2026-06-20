@@ -3,31 +3,33 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Star, Shield, Clock, ChevronDown, Car, Check } from 'lucide-react';
+import { motion, Variants, Transition } from 'framer-motion';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
 import WhatsAppButton from '@/components/whatsapp-button';
 import CarCard from '@/components/car-card';
+import IntroScreen from '@/components/intro-screen';
 import { CarCardSkeleton } from '@/components/skeletons';
 import { getPopularCars } from '@/services/cars';
 import type { Car as CarType } from '@/types';
 
 const HOW_IT_WORKS = [
   {
-    step: '01',
+    step: '1',
     title: 'Pilih Mobil',
-    desc: 'Browse katalog lengkap kami. Filter berdasarkan jenis, transmisi, dan harga sesuai kebutuhan.',
+    desc: 'Cari mobil yang sesuai dengan kebutuhan Anda. Filter berdasarkan jenis, harga, dan transmisi.',
     icon: Car,
   },
   {
-    step: '02',
-    title: 'Isi Tanggal Sewa',
-    desc: 'Tentukan tanggal mulai dan selesai. Harga dihitung otomatis dan transparan tanpa biaya tersembunyi.',
+    step: '2',
+    title: 'Tentukan Tanggal',
+    desc: 'Pilih tanggal mulai dan selesai sewa. Harga dihitung secara otomatis dan transparan.',
     icon: Clock,
   },
   {
-    step: '03',
-    title: 'Konfirmasi & Pergi',
-    desc: 'Booking dikonfirmasi dalam 1x24 jam. Mobil siap di lokasi yang disepakati.',
+    step: '3',
+    title: 'Konfirmasi',
+    desc: 'Lakukan pembayaran dan mobil siap digunakan pada waktu yang telah ditentukan.',
     icon: Check,
   },
 ];
@@ -35,25 +37,57 @@ const HOW_IT_WORKS = [
 const FAQS = [
   {
     q: 'Berapa minimal durasi sewa?',
-    a: 'Minimal sewa adalah 1 hari. Tidak ada batasan maksimal — bisa sewa mingguan atau bulanan dengan harga lebih hemat.',
+    a: 'Minimal sewa adalah 1 hari (24 jam). Tidak ada batasan maksimal, Anda bisa menyewa untuk mingguan atau bulanan dengan harga lebih murah.',
   },
   {
-    q: 'Apakah harga sudah termasuk BBM?',
-    a: 'Harga yang tertera belum termasuk bahan bakar. Pelanggan bertanggung jawab atas pengisian BBM selama masa sewa.',
+    q: 'Apakah harga sudah termasuk bahan bakar?',
+    a: 'Harga sewa belum termasuk bahan bakar (BBM). Pelanggan diharapkan mengisi BBM sesuai dengan penggunaan selama masa sewa.',
   },
   {
-    q: 'Bagaimana jika terjadi kecelakaan?',
-    a: 'Semua armada dilengkapi asuransi komprehensif. Hubungi tim kami segera dan kami akan bantu proses klaimnya.',
+    q: 'Bagaimana jika terjadi kendala di jalan?',
+    a: 'Semua armada kami dilindungi oleh asuransi. Hubungi customer service kami yang siap membantu 24 jam.',
   },
   {
-    q: 'Apakah ada deposit yang diperlukan?',
-    a: 'Ya, deposit awal diperlukan sebagai jaminan. Besaran deposit bervariasi sesuai jenis kendaraan dan akan dikembalikan setelah masa sewa selesai.',
+    q: 'Apakah perlu deposit awal?',
+    a: 'Ya, kami membutuhkan deposit sebagai jaminan yang akan dikembalikan 100% setelah masa sewa selesai tanpa masalah.',
   },
   {
-    q: 'Bisa sewa dengan atau tanpa supir?',
-    a: 'Tersedia opsi lepas kunci (tanpa supir) maupun dengan supir berpengalaman dengan biaya tambahan.',
+    q: 'Bisa sewa lepas kunci?',
+    a: 'Ya, kami menyediakan opsi sewa lepas kunci (tanpa supir) maupun dengan supir sesuai kebutuhan Anda.',
   },
 ];
+
+// iOS Spring Configurations
+const springTransition: Transition = {
+  type: "spring",
+  stiffness: 400,
+  damping: 30,
+};
+
+const gentleSpringTransition: Transition = {
+  type: "spring",
+  stiffness: 80,
+  damping: 20,
+};
+
+const fadeUpVariants: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: gentleSpringTransition
+  }
+};
+
+const staggerContainer: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    }
+  }
+};
 
 export default function HomePage() {
   const [cars, setCars] = useState<CarType[]>([]);
@@ -67,296 +101,345 @@ export default function HomePage() {
   }, []);
 
   return (
-    <>
+    <div className="bg-slate-50 min-h-screen text-slate-900">
+      <IntroScreen />
       <Navbar />
 
-      {/* HERO */}
-      <section className="relative min-h-[100svh] flex items-center overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920&q=85')`,
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/70 to-slate-950/30" />
+      {/* HERO SECTION */}
+      <section className="pt-32 pb-24 bg-black border-b border-zinc-900 overflow-hidden">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            
+            {/* Left Content */}
+            <motion.div 
+              className="max-w-2xl"
+              variants={staggerContainer}
+              initial="hidden"
+              animate="visible"
+            >
+              <motion.h1 variants={fadeUpVariants} className="text-5xl lg:text-7xl font-bold text-white leading-tight tracking-tight mb-8">
+                Eksplorasi <br/>
+                <span className="text-zinc-500">Tanpa Batas.</span>
+              </motion.h1>
+              
+              <motion.p variants={fadeUpVariants} className="text-lg text-zinc-400 leading-relaxed mb-10 max-w-lg font-light tracking-wide">
+                Armada eksklusif dengan pelayanan kelas satu. Pesan langsung dari mana saja, kapan saja.
+              </motion.p>
 
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl pt-24 pb-16">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-500/20 border border-blue-400/30 rounded-full text-blue-300 text-sm font-medium mb-6">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-              10+ Armada Premium Tersedia
-            </div>
+              <motion.div variants={fadeUpVariants} className="flex flex-col sm:flex-row gap-4 mb-12">
+                <Link href="/cars" passHref legacyBehavior>
+                  <motion.a
+                    whileTap={{ scale: 0.95 }}
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-black font-semibold rounded-full hover:bg-zinc-200 transition-colors"
+                  >
+                    Pilih Mobil Anda
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                  </motion.a>
+                </Link>
+                <Link href="/#how-it-works" passHref legacyBehavior>
+                  <motion.a
+                    whileTap={{ scale: 0.95 }}
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-transparent hover:bg-white hover:text-black text-white font-medium rounded-full border border-zinc-700 transition-all duration-300"
+                  >
+                    Lihat Cara Kerja
+                  </motion.a>
+                </Link>
+              </motion.div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-              Sewa Mobil{' '}
-              <span className="text-blue-400">Mudah</span>
-              <br />& Terpercaya
-            </h1>
-            <p className="text-lg text-slate-300 leading-relaxed mb-8 max-w-xl">
-              Pilihan armada lengkap dari city car hingga luxury sedan. Proses booking online, harga transparan, dan layanan 24/7.
-            </p>
-
-            {/* Stats */}
-            <div className="flex flex-wrap items-center gap-6 mb-10">
-              {[
-                { value: '500+', label: 'Pelanggan Puas' },
-                { value: '10+', label: 'Armada Pilihan' },
-                { value: '4.9', label: 'Rating Rata-rata', icon: <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" /> },
-              ].map((stat) => (
-                <div key={stat.label} className="flex items-center gap-2">
-                  <div>
-                    <div className="flex items-center gap-1">
-                      {stat.icon}
-                      <span className="text-2xl font-bold text-white">{stat.value}</span>
-                    </div>
-                    <p className="text-xs text-slate-400">{stat.label}</p>
-                  </div>
+              <motion.div variants={fadeUpVariants} className="flex items-center gap-8 pt-8 border-t border-zinc-800">
+                <div>
+                  <p className="text-3xl font-light text-white">500+</p>
+                  <p className="text-xs text-zinc-500 uppercase tracking-widest mt-1">Klien Eksklusif</p>
                 </div>
-              ))}
-            </div>
+                <div className="w-px h-12 bg-zinc-800" />
+                <div>
+                  <div className="flex items-center gap-2">
+                    <p className="text-3xl font-light text-white">4.9</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none" className="text-white"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  </div>
+                  <p className="text-xs text-zinc-500 uppercase tracking-widest mt-1">Rating Kepuasan</p>
+                </div>
+              </motion.div>
+            </motion.div>
 
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link
-                href="/cars"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-blue-600/30"
+            {/* Right Content */}
+            <motion.div 
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ type: "spring", stiffness: 60, damping: 20, delay: 0.2 }}
+              className="hidden lg:block relative"
+            >
+              <motion.div 
+                animate={{ y: [0, -15, 0] }}
+                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                className="rounded-3xl overflow-hidden shadow-2xl bg-black aspect-[4/3] relative"
               >
-                Sewa Mobil Sekarang
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                href="/#how-it-works"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white font-medium rounded-xl backdrop-blur-sm border border-white/10 transition-colors"
-              >
-                Cara Kerja
-              </Link>
-            </div>
+                <img 
+                  src="https://images.unsplash.com/photo-1503376760367-1234c9c7f66a?q=80&w=1200&auto=format&fit=crop" 
+                  alt="Luxury Car Rental" 
+                  className="w-full h-full object-cover opacity-80"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+              </motion.div>
+            </motion.div>
           </div>
-        </div>
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-white/40 animate-bounce">
-          <ChevronDown className="w-5 h-5" />
         </div>
       </section>
 
       {/* TRUST BADGES */}
-      <section className="bg-slate-50 dark:bg-slate-900 border-y border-slate-200 dark:border-slate-800 py-8">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+      <section className="bg-white py-12 border-b border-slate-200 overflow-hidden">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={staggerContainer}
+          className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl"
+        >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
-              { icon: Shield, title: 'Asuransi Lengkap', desc: 'Semua armada diasuransikan' },
-              { icon: Clock, title: 'Layanan 24/7', desc: 'Siap membantu kapanpun' },
-              { icon: Star, title: 'Rating 4.9/5', desc: 'Dari 500+ ulasan pengguna' },
-              { icon: Car, title: 'Armada Terawat', desc: 'Perawatan berkala terjadwal' },
+              { icon: Shield, title: 'Proteksi Penuh', desc: 'Asuransi komprehensif' },
+              { icon: Clock, title: 'Layanan VIP', desc: 'Bantuan 24/7 di mana saja' },
+              { icon: Check, title: 'Kondisi Prima', desc: 'Standar perawatan tertinggi' },
+              { icon: Car, title: 'Koleksi Eksklusif', desc: 'Hanya kendaraan terbaik' },
             ].map((item) => (
-              <div key={item.title} className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/30 rounded-xl flex items-center justify-center shrink-0">
-                  <item.icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <motion.div key={item.title} variants={fadeUpVariants} className="flex flex-col items-center text-center p-4">
+                <div className="w-14 h-14 bg-black text-white rounded-full flex items-center justify-center mb-5 shadow-lg">
+                  <item.icon className="w-6 h-6" />
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-slate-900 dark:text-white">{item.title}</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">{item.desc}</p>
-                </div>
-              </div>
+                <h3 className="font-semibold text-slate-900 mb-1">{item.title}</h3>
+                <p className="text-sm text-slate-500 font-light">{item.desc}</p>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* POPULAR CARS */}
-      <section className="py-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
+      <section className="py-20 bg-slate-50 overflow-hidden">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={staggerContainer}
+          className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl"
+        >
+          <motion.div variants={fadeUpVariants} className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
             <div>
-              <p className="text-blue-600 dark:text-blue-400 text-sm font-medium mb-1">Armada Pilihan</p>
-              <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Mobil Populer</h2>
-              <p className="text-slate-500 dark:text-slate-400 mt-2">Pilihan terbaik dari pelanggan kami</p>
+              <h2 className="text-3xl font-bold text-slate-900">Mobil Terpopuler</h2>
+              <p className="text-slate-600 mt-2">Pilihan armada yang paling sering disewa oleh pelanggan.</p>
             </div>
-            <Link
-              href="/cars"
-              className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
-            >
-              Lihat semua mobil
-              <ArrowRight className="w-4 h-4" />
+            <Link href="/cars" passHref legacyBehavior>
+              <motion.a 
+                whileHover={{ x: 5 }}
+                className="inline-flex items-center gap-2 text-sm font-semibold text-black hover:opacity-70 transition-opacity uppercase tracking-widest"
+              >
+                Katalog Lengkap
+                <ArrowRight className="w-4 h-4" />
+              </motion.a>
             </Link>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {loading
               ? [...Array(6)].map((_, i) => <CarCardSkeleton key={i} />)
-              : cars.map((car) => <CarCard key={car.id} car={car} />)}
+              : cars.map((car) => (
+                  <motion.div key={car.id} variants={fadeUpVariants} whileHover={{ y: -5 }} transition={springTransition}>
+                    <CarCard car={car} />
+                  </motion.div>
+                ))}
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* HOW IT WORKS */}
-      <section id="how-it-works" className="py-20 bg-slate-50 dark:bg-slate-900/50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-          <div className="text-center mb-14">
-            <p className="text-blue-600 dark:text-blue-400 text-sm font-medium mb-1">Mudah & Cepat</p>
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Cara Kerja Rentino</h2>
-            <p className="text-slate-500 dark:text-slate-400 mt-3 max-w-lg mx-auto">
-              Tiga langkah sederhana untuk memulai perjalananmu
+      <section id="how-it-works" className="py-20 bg-white border-y border-slate-200 overflow-hidden">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={staggerContainer}
+          className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl"
+        >
+          <motion.div variants={fadeUpVariants} className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-slate-900">Cara Memesan</h2>
+            <p className="text-slate-600 mt-3 max-w-xl mx-auto">
+              Proses penyewaan yang cepat dan tidak ribet. Mulai dari memilih mobil hingga konfirmasi hanya dalam beberapa menit.
             </p>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {HOW_IT_WORKS.map((item, idx) => (
-              <div key={item.step} className="relative">
-                {idx < HOW_IT_WORKS.length - 1 && (
-                  <div className="hidden md:block absolute top-8 left-full w-full h-px bg-gradient-to-r from-blue-200 to-transparent dark:from-blue-800 z-0" />
-                )}
-                <div className="relative bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 hover:shadow-md transition-shadow">
-                  <span className="text-5xl font-black text-slate-100 dark:text-slate-800 absolute top-4 right-5 select-none">
-                    {item.step}
-                  </span>
-                  <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/30 rounded-xl flex items-center justify-center mb-4">
-                    <item.icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <h3 className="font-semibold text-slate-900 dark:text-white mb-2">{item.title}</h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{item.desc}</p>
-                </div>
-              </div>
+            {HOW_IT_WORKS.map((item) => (
+              <motion.div key={item.step} variants={fadeUpVariants} className="bg-slate-50/50 rounded-2xl p-8 border border-slate-100 text-center hover:bg-white hover:shadow-xl transition-all duration-300">
+                <motion.div 
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  transition={springTransition}
+                  className="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-md"
+                >
+                  <span className="text-xl font-bold">{item.step}</span>
+                </motion.div>
+                <h3 className="text-xl font-semibold text-slate-900 mb-3">{item.title}</h3>
+                <p className="text-slate-600 leading-relaxed">{item.desc}</p>
+              </motion.div>
             ))}
           </div>
-
-          <div className="text-center mt-12">
-            <Link
-              href="/cars"
-              className="inline-flex items-center gap-2 px-6 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors"
-            >
-              Mulai Sewa Sekarang
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </div>
+        </motion.div>
       </section>
 
-      {/* SOCIAL PROOF */}
-      <section className="py-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-          <div className="text-center mb-12">
-            <p className="text-blue-600 dark:text-blue-400 text-sm font-medium mb-1">Testimoni</p>
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Kata Mereka</h2>
-          </div>
+      {/* TESTIMONIALS */}
+      <section className="py-20 bg-slate-50 overflow-hidden">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={staggerContainer}
+          className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl"
+        >
+          <motion.div variants={fadeUpVariants} className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-slate-900">Ulasan Pelanggan</h2>
+          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
                 name: 'Budi Santoso',
-                role: 'Marketing Manager',
-                text: 'Proses booking sangat mudah, mobil datang tepat waktu dan bersih. Pasti akan sewa lagi untuk trip keluarga berikutnya.',
+                role: 'Pekerja Kantoran',
+                text: 'Mobilnya bersih, wangi, dan proses ambil mobilnya sangat cepat. Sangat direkomendasikan untuk sewa mingguan.',
                 rating: 5,
-                avatar: 'B',
               },
               {
                 name: 'Sari Dewi',
-                role: 'Freelancer',
-                text: 'Harga sangat kompetitif dibanding tempat lain. Innova Reborn yang saya sewa kondisinya prima. Customer service responsif banget.',
+                role: 'Wiraswasta',
+                text: 'Sewa Avanza untuk mudik keluarga. Mesin sehat tidak ada masalah sama sekali selama perjalanan jauh.',
                 rating: 5,
-                avatar: 'S',
               },
               {
                 name: 'Dimas Pratama',
-                role: 'Software Engineer',
-                text: 'Sewa BMW 320i untuk meeting klien penting. Sangat memuaskan, kondisi mobil sempurna. Worth every rupiah!',
-                rating: 5,
-                avatar: 'D',
+                role: 'Mahasiswa',
+                text: 'Harganya cocok untuk kantong mahasiswa. Pilihan mobil Brio sangat pas untuk muter-muter dalam kota.',
+                rating: 4,
               },
             ].map((review) => (
-              <div key={review.name} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 hover:shadow-md transition-shadow">
+              <motion.div key={review.name} variants={fadeUpVariants} className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
                 <div className="flex gap-1 mb-4">
                   {[...Array(review.rating)].map((_, i) => (
                     <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                   ))}
+                  {[...Array(5 - review.rating)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 text-slate-200" />
+                  ))}
                 </div>
-                <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed mb-5">
-                  &ldquo;{review.text}&rdquo;
-                </p>
+                <p className="text-slate-600 mb-6 line-clamp-4">"{review.text}"</p>
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-semibold">
-                    {review.avatar}
+                  <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center text-white font-bold">
+                    {review.name.charAt(0)}
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-slate-900 dark:text-white">{review.name}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{review.role}</p>
+                    <p className="font-semibold text-slate-900 text-sm">{review.name}</p>
+                    <p className="text-xs text-slate-500">{review.role}</p>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="py-20 bg-slate-50 dark:bg-slate-900/50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-          <div className="text-center mb-12">
-            <p className="text-blue-600 dark:text-blue-400 text-sm font-medium mb-1">Pertanyaan Umum</p>
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white">FAQ</h2>
-          </div>
+      <section id="faq" className="py-20 bg-white border-t border-slate-200 overflow-hidden">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={staggerContainer}
+          className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl"
+        >
+          <motion.div variants={fadeUpVariants} className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-slate-900">Pertanyaan yang Sering Diajukan</h2>
+          </motion.div>
 
-          <div className="space-y-3">
+          <div className="space-y-4">
             {FAQS.map((faq, idx) => (
-              <div
+              <motion.div
                 key={idx}
-                className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden"
+                variants={fadeUpVariants}
+                className="bg-slate-50 rounded-lg border border-slate-200 overflow-hidden"
               >
-                <button
+                <motion.button
+                  whileTap={{ scale: 0.99 }}
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full flex items-center justify-between p-5 text-left"
+                  className="w-full flex items-center justify-between p-5 text-left hover:bg-slate-100 transition-colors"
                 >
-                  <span className="font-medium text-slate-900 dark:text-white text-sm">{faq.q}</span>
-                  <ChevronDown
-                    className={`w-4 h-4 text-slate-400 transition-transform shrink-0 ml-4 ${
-                      openFaq === idx ? 'rotate-180' : ''
-                    }`}
-                  />
-                </button>
+                  <span className="font-medium text-slate-900">{faq.q}</span>
+                  <motion.div
+                    animate={{ rotate: openFaq === idx ? 180 : 0 }}
+                    transition={springTransition}
+                  >
+                    <ChevronDown className="w-5 h-5 text-slate-500" />
+                  </motion.div>
+                </motion.button>
                 {openFaq === idx && (
-                  <div className="px-5 pb-5 text-sm text-slate-600 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-800 pt-4">
+                  <motion.div 
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    transition={springTransition}
+                    className="px-5 pb-5 text-slate-600 pt-2 border-t border-slate-200"
+                  >
                     {faq.a}
-                  </div>
+                  </motion.div>
                 )}
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* CTA BANNER */}
-      <section className="py-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-          <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-3xl p-10 md:p-14 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Siap Memulai Perjalanan?
-            </h2>
-            <p className="text-blue-100 mb-8 max-w-lg mx-auto">
-              Bergabung dengan 500+ pelanggan puas yang sudah mempercayakan perjalanan mereka pada Rentino.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link
-                href="/cars"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-blue-700 font-semibold rounded-xl hover:bg-blue-50 transition-colors"
+      <section className="py-24 bg-zinc-950 overflow-hidden">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUpVariants}
+          className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center"
+        >
+          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6 tracking-tight">
+            Mulai Perjalanan Anda.
+          </h2>
+          <p className="text-zinc-400 text-lg lg:text-xl mb-10 font-light max-w-2xl mx-auto">
+            Jangan kompromi untuk kenyamanan. Pesan sekarang dan nikmati standar layanan tertinggi kami.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/cars" passHref legacyBehavior>
+              <motion.a
+                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.05 }}
+                transition={springTransition}
+                className="inline-flex items-center justify-center px-8 py-4 bg-white text-black font-semibold rounded-full hover:bg-zinc-200 transition-colors"
               >
-                Lihat Katalog Mobil
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <a
-                href="https://wa.me/6281378821654"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-blue-500/30 text-white border border-white/20 font-medium rounded-xl hover:bg-blue-500/40 transition-colors"
-              >
-                Hubungi via WhatsApp
-              </a>
-            </div>
+                Lihat Katalog
+              </motion.a>
+            </Link>
+            <motion.a
+              href="https://wa.me/6281378821654"
+              target="_blank"
+              rel="noopener noreferrer"
+              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.05 }}
+              transition={springTransition}
+              className="inline-flex items-center justify-center px-8 py-4 bg-transparent text-white border border-zinc-700 font-medium rounded-full hover:bg-white hover:text-black transition-colors"
+            >
+              Hubungi Admin
+            </motion.a>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       <Footer />
       <WhatsAppButton />
-    </>
+    </div>
   );
 }

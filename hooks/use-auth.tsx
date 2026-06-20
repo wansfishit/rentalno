@@ -56,7 +56,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
       if (session) {
-        document.cookie = `sb-access-token=${session.access_token}; path=/; max-age=${session.expires_in}; SameSite=Lax; secure`;
+        const secureFlag = window.location.protocol === 'https:' ? '; secure' : '';
+        document.cookie = `sb-access-token=${session.access_token}; path=/; max-age=${session.expires_in}; SameSite=Lax${secureFlag}`;
       }
       if (session?.user) {
         fetchProfile(session.user.id).finally(() => setLoading(false));
@@ -69,7 +70,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       (event, session) => {
         if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
           if (session) {
-            document.cookie = `sb-access-token=${session.access_token}; path=/; max-age=${session.expires_in}; SameSite=Lax; secure`;
+            const secureFlag = window.location.protocol === 'https:' ? '; secure' : '';
+            document.cookie = `sb-access-token=${session.access_token}; path=/; max-age=${session.expires_in}; SameSite=Lax${secureFlag}`;
           }
         } else if (event === 'SIGNED_OUT') {
           document.cookie = 'sb-access-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
@@ -99,7 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         session,
         profile,
         loading,
-        isAdmin: true, // Bypass sementara
+        isAdmin: user?.email === 'pereman0813@gmail.com' || profile?.role === 'admin',
         refreshProfile,
         signOut,
       }}

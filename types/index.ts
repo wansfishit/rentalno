@@ -42,6 +42,10 @@ export interface Booking {
   total_price: number;
   status: BookingStatus;
   notes: string | null;
+  guest_name?: string | null;
+  guest_phone?: string | null;
+  guest_address?: string | null;
+  guest_location?: string | null;
   created_at: string;
   updated_at: string;
   car?: Car;

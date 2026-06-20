@@ -1,16 +1,17 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from '@/components/theme-provider';
 import { AuthProvider } from '@/hooks/use-auth';
+import LiquidTabBar from '@/components/liquid-tab-bar';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+const jakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-jakarta' });
 
 export const metadata: Metadata = {
   title: {
-    default: 'Rentino — Sewa Mobil Online Terpercaya',
-    template: '%s | Rentino',
+    default: 'Rentalno — Sewa Mobil Eksklusif',
+    template: '%s | Rentalno',
   },
   description:
     'Sewa mobil online dengan harga terbaik. Pilihan armada lengkap, proses mudah, dan layanan 24 jam. Toyota, Honda, BMW, Mercedes dan lainnya.',
@@ -35,7 +36,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans`}>
+      <body className={`${jakarta.variable} font-sans`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
@@ -43,7 +44,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            {children}
+            <div className="pb-24 md:pb-0 min-h-screen flex flex-col">
+              {children}
+            </div>
+            <LiquidTabBar />
             <Toaster position="top-right" richColors closeButton />
           </AuthProvider>
         </ThemeProvider>
