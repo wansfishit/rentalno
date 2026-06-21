@@ -54,13 +54,12 @@ export interface Booking {
 
 export interface Review {
   id: string;
-  user_id: string;
-  car_id: string;
-  booking_id: string | null;
+  user_id?: string | null;
+  guest_name?: string | null;
   rating: number;
-  comment: string | null;
+  comment: string;
   created_at: string;
-  profile?: Profile;
+  profiles?: Profile; // Populated by join
 }
 
 export interface CarFilters {

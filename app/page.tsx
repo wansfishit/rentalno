@@ -9,6 +9,7 @@ import Footer from '@/components/footer';
 import WhatsAppButton from '@/components/whatsapp-button';
 import CarCard from '@/components/car-card';
 import IntroScreen from '@/components/intro-screen';
+import ReviewsSection from '@/components/reviews-section';
 import { CarCardSkeleton } from '@/components/skeletons';
 import { getPopularCars } from '@/services/cars';
 import type { Car as CarType } from '@/types';
@@ -289,64 +290,8 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      {/* TESTIMONIALS */}
-      <section className="py-20 bg-slate-50 overflow-hidden">
-        <motion.div 
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, amount: 0.2 }}
-          variants={staggerContainer}
-          className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl"
-        >
-          <motion.div variants={fadeUpVariants} className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-slate-900">Ulasan Pelanggan</h2>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                name: 'Budi Santoso',
-                role: 'Pekerja Kantoran',
-                text: 'Mobilnya bersih, wangi, dan proses ambil mobilnya sangat cepat. Sangat direkomendasikan untuk sewa mingguan.',
-                rating: 5,
-              },
-              {
-                name: 'Sari Dewi',
-                role: 'Wiraswasta',
-                text: 'Sewa Avanza untuk mudik keluarga. Mesin sehat tidak ada masalah sama sekali selama perjalanan jauh.',
-                rating: 5,
-              },
-              {
-                name: 'Dimas Pratama',
-                role: 'Mahasiswa',
-                text: 'Harganya cocok untuk kantong mahasiswa. Pilihan mobil Brio sangat pas untuk muter-muter dalam kota.',
-                rating: 4,
-              },
-            ].map((review) => (
-              <motion.div key={review.name} variants={fadeUpVariants} className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                <div className="flex gap-1 mb-4">
-                  {[...Array(review.rating)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  ))}
-                  {[...Array(5 - review.rating)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 text-slate-200" />
-                  ))}
-                </div>
-                <p className="text-slate-600 mb-6 line-clamp-4">"{review.text}"</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center text-white font-bold">
-                    {review.name.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-slate-900 text-sm">{review.name}</p>
-                    <p className="text-xs text-slate-500">{review.role}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </section>
+      {/* REVIEWS */}
+      <ReviewsSection />
 
       {/* FAQ */}
       <section id="faq" className="py-20 bg-white border-t border-slate-200 overflow-hidden">
