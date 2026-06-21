@@ -4,6 +4,19 @@ export type Transmission = 'Manual' | 'Automatic';
 export type FuelType = 'Bensin' | 'Solar' | 'Hybrid' | 'Listrik';
 export type CarCategory = 'MPV' | 'SUV' | 'Sedan' | 'Hatchback' | 'Luxury';
 
+export interface SiteSettings {
+  id: number;
+  site_title: string;
+  site_logo_url: string | null;
+  hero_title: string;
+  hero_subtitle: string;
+  social_facebook: string | null;
+  social_instagram: string | null;
+  social_tiktok: string | null;
+  social_whatsapp: string | null;
+  updated_at: string;
+}
+
 export interface Profile {
   id: string;
   full_name: string | null;

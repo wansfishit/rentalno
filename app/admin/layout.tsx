@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { Car, LayoutDashboard, ListOrdered, Users, LogOut, Menu, X, ChevronRight, MessageSquare } from 'lucide-react';
+import { Car, LayoutDashboard, ListOrdered, Users, LogOut, Menu, X, ChevronRight, MessageSquare, Settings } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { href: '/admin/bookings', label: 'Booking', icon: ListOrdered },
   { href: '/admin/users', label: 'Pengguna', icon: Users },
   { href: '/admin/reviews', label: 'Ulasan', icon: MessageSquare },
+  { href: '/admin/settings', label: 'Pengaturan Website', icon: Settings },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

@@ -9,6 +9,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
+import { useAuth } from '@/hooks/use-auth';
+import { useSiteSettings } from '@/hooks/use-site-settings';
 
 const schema = z.object({
   full_name: z.string().min(2, 'Nama minimal 2 karakter'),
@@ -25,6 +27,9 @@ type FormData = z.infer<typeof schema>;
 export default function RegisterPage() {
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { signUp } = useAuth();
+  const { settings } = useSiteSettings();
+  const siteTitle = settings?.site_title || 'Rentalno';
   const router = useRouter();
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
@@ -66,15 +71,10 @@ export default function RegisterPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-slate-900/20" />
         <div className="absolute bottom-12 left-12 right-12">
-          <div className="flex gap-8 mb-6">
-            {[{ v: '500+', l: 'Pelanggan' }, { v: '10+', l: 'Armada' }, { v: '4.9★', l: 'Rating' }].map((s) => (
-              <div key={s.l}>
-                <p className="text-2xl font-bold text-white">{s.v}</p>
-                <p className="text-white/60 text-sm">{s.l}</p>
-              </div>
-            ))}
-          </div>
-          <p className="text-white/80 text-sm">Bergabunglah dengan ribuan pelanggan puas Rentino.</p>
+          <p className="text-white text-xl font-semibold mb-2">
+            "Sewa mobil jadi lebih mudah dan transparan. Pilihan armada terbaik."
+          </p>
+          <p className="text-white/80 text-sm">Bergabunglah dengan ribuan pelanggan puas {siteTitle}.</p>
         </div>
       </div>
 

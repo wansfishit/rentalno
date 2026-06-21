@@ -2,6 +2,8 @@
 
 import { useState, Suspense } from 'react';
 import Link from 'next/link';
+import Logo from '@/components/logo';
+import { useSiteSettings } from '@/hooks/use-site-settings';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Car, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -22,6 +24,8 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { settings } = useSiteSettings();
+  const siteTitle = settings?.site_title || 'Rentalno';
   const redirect = searchParams.get('redirect') || '/';
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
@@ -147,7 +151,7 @@ export default function LoginPage() {
           <p className="text-white text-xl font-semibold mb-2">
             &ldquo;Pengalaman sewa mobil yang menyenangkan dan terpercaya&rdquo;
           </p>
-          <p className="text-white/60 text-sm">— Rentino Customer Review</p>
+          <p className="text-white/60 text-sm">— {siteTitle} Customer Review</p>
         </div>
       </div>
     </div>

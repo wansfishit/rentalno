@@ -1,5 +1,9 @@
+'use client';
+
 import { cn } from "@/lib/utils";
 import { CarFront } from "lucide-react";
+import { useSiteSettings } from "@/hooks/use-site-settings";
+import Image from "next/image";
 
 interface LogoProps {
   className?: string;
@@ -16,6 +20,8 @@ export default function Logo({
   showText = true,
   textClassName
 }: LogoProps) {
+  const { settings } = useSiteSettings();
+  const siteTitle = settings?.site_title || 'Rentalno';
   
   const sizeMap = {
     sm: 'text-xl',
@@ -51,18 +57,28 @@ export default function Logo({
 
   return (
     <div className={cn("flex items-center gap-2", className)}>
-      <CarFront className={cn(iconSizeMap[size], iconVariantMap[variant])} />
-      <span 
-        className={cn(
-          "font-bold tracking-tight",
-          sizeMap[size],
-          textVariantMap[variant],
-          textClassName
-        )} 
-        style={{ fontFamily: 'var(--font-jakarta)' }}
-      >
-        Rentalno
-      </span>
+      {settings?.site_logo_url ? (
+        <img 
+          src={settings.site_logo_url} 
+          alt={siteTitle} 
+          className={cn("object-contain", iconSizeMap[size])}
+        />
+      ) : (
+        <CarFront className={cn(iconSizeMap[size], iconVariantMap[variant])} />
+      )}
+      {showText && (
+        <span 
+          className={cn(
+            "font-bold tracking-tight",
+            sizeMap[size],
+            textVariantMap[variant],
+            textClassName
+          )} 
+          style={{ fontFamily: 'var(--font-jakarta)' }}
+        >
+          {siteTitle}
+        </span>
+      )}
     </div>
   );
 }

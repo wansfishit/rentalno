@@ -13,6 +13,7 @@ import ReviewsSection from '@/components/reviews-section';
 import { CarCardSkeleton } from '@/components/skeletons';
 import { getPopularCars } from '@/services/cars';
 import type { Car as CarType } from '@/types';
+import { useSiteSettings } from '@/hooks/use-site-settings';
 
 const HOW_IT_WORKS = [
   {
@@ -94,6 +95,10 @@ export default function HomePage() {
   const [cars, setCars] = useState<CarType[]>([]);
   const [loading, setLoading] = useState(true);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const { settings } = useSiteSettings();
+  
+  const heroTitle = settings?.hero_title || "Eksplorasi\nTanpa Batas.";
+  const heroSubtitle = settings?.hero_subtitle || "Armada eksklusif dengan pelayanan kelas satu. Pesan langsung dari mana saja, kapan saja.";
 
   useEffect(() => {
     getPopularCars(6)
@@ -118,13 +123,12 @@ export default function HomePage() {
               initial="hidden"
               animate="visible"
             >
-              <motion.h1 variants={fadeUpVariants} className="text-5xl lg:text-7xl font-bold text-white leading-tight tracking-tight mb-8">
-                Eksplorasi <br/>
-                <span className="text-zinc-500">Tanpa Batas.</span>
+              <motion.h1 variants={fadeUpVariants} className="text-5xl lg:text-7xl font-bold text-white leading-tight tracking-tight mb-8 whitespace-pre-line">
+                {heroTitle}
               </motion.h1>
               
-              <motion.p variants={fadeUpVariants} className="text-lg text-zinc-400 leading-relaxed mb-10 max-w-lg font-light tracking-wide">
-                Armada eksklusif dengan pelayanan kelas satu. Pesan langsung dari mana saja, kapan saja.
+              <motion.p variants={fadeUpVariants} className="text-lg text-zinc-400 leading-relaxed mb-10 max-w-lg font-light tracking-wide whitespace-pre-line">
+                {heroSubtitle}
               </motion.p>
 
               <motion.div variants={fadeUpVariants} className="flex flex-col sm:flex-row gap-4 mb-12">

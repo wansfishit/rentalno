@@ -1,8 +1,17 @@
+'use client';
+
 import Link from 'next/link';
-import { Instagram, Phone, MapPin, Mail } from 'lucide-react';
+import { Instagram, Phone, MapPin, Mail, Facebook } from 'lucide-react';
 import Logo from '@/components/logo';
+import { useSiteSettings } from '@/hooks/use-site-settings';
 
 export default function Footer() {
+  const { settings } = useSiteSettings();
+  
+  const fbLink = settings?.social_facebook;
+  const igLink = settings?.social_instagram || 'https://instagram.com/R1STNO';
+  const tiktokLink = settings?.social_tiktok;
+  const waLink = settings?.social_whatsapp || 'https://wa.me/6281378821654';
   return (
     <footer className="bg-black border-t border-zinc-900 text-zinc-400">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-12 lg:py-16">
@@ -17,24 +26,52 @@ export default function Footer() {
               Platform sewa mobil eksklusif dengan armada terbaik dan proses instan. Perjalanan mewah Anda dimulai di sini.
             </p>
             <div className="flex items-center gap-3">
-              <a
-                href="https://wa.me/6281378821654"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-zinc-900 hover:bg-white rounded-full flex items-center justify-center transition-colors group"
-                aria-label="WhatsApp"
-              >
-                <Phone className="w-4 h-4 text-zinc-400 group-hover:text-black" />
-              </a>
-              <a
-                href="https://instagram.com/R1STNO"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-zinc-900 hover:bg-white rounded-full flex items-center justify-center transition-colors group"
-                aria-label="Instagram"
-              >
-                <Instagram className="w-4 h-4 text-zinc-400 group-hover:text-black" />
-              </a>
+              {waLink && (
+                <a
+                  href={waLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 bg-zinc-900 hover:bg-white rounded-full flex items-center justify-center transition-colors group"
+                  aria-label="WhatsApp"
+                >
+                  <Phone className="w-4 h-4 text-zinc-400 group-hover:text-black" />
+                </a>
+              )}
+              {igLink && (
+                <a
+                  href={igLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 bg-zinc-900 hover:bg-white rounded-full flex items-center justify-center transition-colors group"
+                  aria-label="Instagram"
+                >
+                  <Instagram className="w-4 h-4 text-zinc-400 group-hover:text-black" />
+                </a>
+              )}
+              {fbLink && (
+                <a
+                  href={fbLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 bg-zinc-900 hover:bg-white rounded-full flex items-center justify-center transition-colors group"
+                  aria-label="Facebook"
+                >
+                  <Facebook className="w-4 h-4 text-zinc-400 group-hover:text-black" />
+                </a>
+              )}
+              {tiktokLink && (
+                <a
+                  href={tiktokLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 bg-zinc-900 hover:bg-white rounded-full flex items-center justify-center transition-colors group"
+                  aria-label="TikTok"
+                >
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-zinc-400 group-hover:text-black">
+                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                  </svg>
+                </a>
+              )}
             </div>
           </div>
 
@@ -106,7 +143,7 @@ export default function Footer() {
 
         <div className="border-t border-zinc-900 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-zinc-600">
-            &copy; {new Date().getFullYear()} Rentalno All rights reserved.
+            &copy; {new Date().getFullYear()} {settings?.site_title || 'Rentalno'}. All rights reserved.
           </p>
           <div className="flex items-center gap-6 text-sm">
             <Link href="#" className="text-zinc-600 hover:text-white transition-colors">Kebijakan Privasi</Link>
