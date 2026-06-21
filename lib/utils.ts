@@ -61,6 +61,17 @@ export function slugify(text: string): string {
   return text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
 }
 
+export function formatWhatsAppNumber(phone: string | null | undefined): string {
+  if (!phone) return '';
+  let cleanNum = phone.replace(/[^0-9]/g, '');
+  if (cleanNum.startsWith('0')) {
+    cleanNum = '62' + cleanNum.slice(1);
+  } else if (cleanNum.startsWith('8') && cleanNum.length >= 9 && cleanNum.length <= 13) {
+    cleanNum = '62' + cleanNum;
+  }
+  return cleanNum;
+}
+
 export function formatSocialLink(value: string | null | undefined, platform: 'whatsapp' | 'instagram' | 'facebook' | 'tiktok'): string {
   if (!value) return '';
   const val = value.trim();
@@ -70,7 +81,7 @@ export function formatSocialLink(value: string | null | undefined, platform: 'wh
   
   switch (platform) {
     case 'whatsapp': {
-      const cleanNum = val.replace(/[^0-9]/g, '');
+      const cleanNum = formatWhatsAppNumber(val);
       return `https://wa.me/${cleanNum}`;
     }
     case 'instagram':

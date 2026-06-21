@@ -11,7 +11,7 @@ import { getCarById } from '@/services/cars';
 import { createBooking } from '@/services/bookings';
 import { useAuth } from '@/hooks/use-auth';
 import { supabase } from '@/lib/supabase';
-import { formatCurrency, formatDate } from '@/lib/utils';
+import { formatCurrency, formatDate, formatWhatsAppNumber } from '@/lib/utils';
 import type { Car } from '@/types';
 import { useSiteSettings } from '@/hooks/use-site-settings';
 
@@ -159,9 +159,10 @@ export default function CarDetailClient() {
       toast.success('Booking berhasil! Mengalihkan ke WhatsApp...');
       
       // Build WhatsApp Message
-      const adminPhone = settings?.contact_phone?.replace(/[^0-9]/g, '') || '6281378821654';
+      const adminPhone = formatWhatsAppNumber(settings?.contact_phone || '6281378821654');
       const customerName = guestName;
-      const waMessage = `Halo Rentalno, saya ingin menyewa mobil:
+      const siteTitle = settings?.site_title || 'RentAja';
+      const waMessage = `Halo ${siteTitle}, saya ingin menyewa mobil:
       
 *Detail Mobil:*
 - Mobil: ${car?.brand} ${car?.model}
@@ -373,7 +374,7 @@ Mohon konfirmasinya. Terima kasih!`;
                       setStartDate(e.target.value);
                       if (endDate && e.target.value >= endDate) setEndDate('');
                     }}
-                    className="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                    className="w-full min-w-0 max-w-full box-border pl-9 pr-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                   />
                 </div>
               </div>
@@ -389,7 +390,7 @@ Mohon konfirmasinya. Terima kasih!`;
                     min={startDate || today}
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                    className="w-full min-w-0 max-w-full box-border pl-9 pr-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                   />
                 </div>
               </div>

@@ -11,22 +11,22 @@ const jakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-jakart
 
 export const metadata: Metadata = {
   title: {
-    default: 'Rentalno — Sewa Mobil Eksklusif',
-    template: '%s | Rentalno',
+    default: 'RentAja — Sewa Mobil Eksklusif',
+    template: '%s | RentAja',
   },
   description:
     'Sewa mobil online dengan harga terbaik. Pilihan armada lengkap, proses mudah, dan layanan 24 jam. Toyota, Honda, BMW, Mercedes dan lainnya.',
   keywords: ['rental mobil', 'sewa mobil', 'car rental', 'mobil murah', 'sewa mobil online'],
-  authors: [{ name: 'Rentalno' }],
+  authors: [{ name: 'RentAja' }],
   openGraph: {
-    title: 'Rentalno — Sewa Mobil Online Terpercaya',
+    title: 'RentAja — Sewa Mobil Online Terpercaya',
     description: 'Sewa mobil online dengan harga terbaik.',
     type: 'website',
     locale: 'id_ID',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Rentalno — Sewa Mobil Online Terpercaya',
+    title: 'RentAja — Sewa Mobil Online Terpercaya',
   },
 };
 

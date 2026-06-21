@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Instagram, Phone, MapPin, Mail, Facebook } from 'lucide-react';
 import Logo from '@/components/logo';
 import { useSiteSettings } from '@/hooks/use-site-settings';
-import { formatSocialLink } from '@/lib/utils';
+import { formatSocialLink, formatWhatsAppNumber } from '@/lib/utils';
 
 export default function Footer() {
   const { settings } = useSiteSettings();
@@ -125,7 +125,7 @@ export default function Footer() {
               {phone && (
                 <li className="flex items-start gap-3 min-w-0">
                   <Phone className="w-4 h-4 text-slate-400 dark:text-zinc-500 mt-0.5 shrink-0" />
-                  <a href={`https://wa.me/${phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="hover:text-primary dark:hover:text-white transition-colors break-all min-w-0">
+                  <a href={`https://wa.me/${formatWhatsAppNumber(phone)}`} target="_blank" rel="noopener noreferrer" className="hover:text-primary dark:hover:text-white transition-colors break-all min-w-0">
                     {phone}
                   </a>
                 </li>
@@ -158,7 +158,7 @@ export default function Footer() {
 
         <div className="border-t border-slate-200 dark:border-white/5 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-slate-500 dark:text-zinc-500">
-            &copy; {new Date().getFullYear()} {settings?.site_title || 'Rentalno'}. All rights reserved.
+            &copy; {new Date().getFullYear()} {settings?.site_title || 'RentAja'}. All rights reserved.
           </p>
           <div className="flex items-center gap-6 text-sm">
             <Link href="#" className="text-slate-500 dark:text-zinc-500 hover:text-primary transition-colors tracking-wide">Kebijakan Privasi</Link>

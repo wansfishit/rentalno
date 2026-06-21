@@ -29,7 +29,7 @@ export default function RegisterPage() {
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const { settings } = useSiteSettings();
-  const siteTitle = settings?.site_title || 'Rentalno';
+  const siteTitle = settings?.site_title || 'RentAja';
   const router = useRouter();
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({

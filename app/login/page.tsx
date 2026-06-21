@@ -106,7 +106,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   const { settings } = useSiteSettings();
-  const siteTitle = settings?.site_title || 'Rentalno';
+  const siteTitle = settings?.site_title || 'RentAja';
 
   return (
     <div className="min-h-screen flex">

@@ -2,10 +2,11 @@
 
 import { Phone } from 'lucide-react';
 import { useSiteSettings } from '@/hooks/use-site-settings';
+import { formatWhatsAppNumber } from '@/lib/utils';
 
 export default function WhatsAppButton() {
   const { settings } = useSiteSettings();
-  const phone = settings?.contact_phone?.replace(/[^0-9]/g, '') || '6281378821654';
+  const phone = formatWhatsAppNumber(settings?.contact_phone || '6281378821654');
 
   return (
     <a

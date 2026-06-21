@@ -14,6 +14,7 @@ import { CarCardSkeleton } from '@/components/skeletons';
 import { getPopularCars } from '@/services/cars';
 import type { Car as CarType } from '@/types';
 import { useSiteSettings } from '@/hooks/use-site-settings';
+import { formatWhatsAppNumber } from '@/lib/utils';
 
 const HOW_IT_WORKS = [
   {
@@ -99,7 +100,8 @@ export default function HomePage() {
   
   const heroTitle = settings?.hero_title || 'Sewa Mobil Premium,\nBebas Ribet';
   const heroSubtitle = settings?.hero_subtitle || 'Pilihan armada terbaik dengan harga transparan dan asuransi penuh untuk perjalanan Anda yang tak terlupakan.';
-  const phone = settings?.contact_phone?.replace(/[^0-9]/g, '') || '6281378821654';
+  const phone = formatWhatsAppNumber(settings?.contact_phone || '6281378821654');
+  const faqsToRender = settings?.faqs && settings.faqs.length > 0 ? settings.faqs : FAQS;
 
   useEffect(() => {
     getPopularCars(6)
@@ -368,7 +370,7 @@ export default function HomePage() {
           </motion.div>
 
           <div className="space-y-4">
-            {FAQS.map((faq, idx) => (
+            {faqsToRender.map((faq, idx) => (
               <motion.div
                 key={idx}
                 variants={fadeUpVariants}

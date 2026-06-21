@@ -6,6 +6,7 @@ import { motion, Variants, Transition } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/use-auth';
+import { useSiteSettings } from '@/hooks/use-site-settings';
 import { getPublicReviews, createReview } from '@/services/reviews';
 import type { Review } from '@/types';
 import {
@@ -44,6 +45,7 @@ const staggerContainer: Variants = {
 
 export default function ReviewsSection() {
   const { user, profile } = useAuth();
+  const { settings } = useSiteSettings();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
@@ -149,7 +151,7 @@ export default function ReviewsSection() {
               <DialogHeader>
                 <DialogTitle className="text-slate-900 dark:text-white">Tulis Ulasan Anda</DialogTitle>
                 <DialogDescription className="text-slate-500 dark:text-zinc-400">
-                  Bagikan pengalaman Anda menyewa mobil di Rentalno.
+                  Bagikan pengalaman Anda menyewa mobil di {settings?.site_title || 'RentAja'}.
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">

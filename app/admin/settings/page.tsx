@@ -5,7 +5,7 @@ import { useSiteSettings } from '@/hooks/use-site-settings';
 import { updateSiteSettings } from '@/services/settings';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
-import { Save, Upload, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { Save, Upload, Image as ImageIcon, Loader2, Plus, Trash2 } from 'lucide-react';
 import type { SiteSettings } from '@/types';
 
 export default function AdminSettingsPage() {
@@ -58,6 +58,23 @@ export default function AdminSettingsPage() {
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleFaqChange = (index: number, key: 'q' | 'a', value: string) => {
+    const newFaqs = [...(formData.faqs || [])];
+    newFaqs[index] = { ...newFaqs[index], [key]: value };
+    setFormData((prev) => ({ ...prev, faqs: newFaqs }));
+  };
+
+  const handleAddFaq = () => {
+    const newFaqs = [...(formData.faqs || [])];
+    newFaqs.push({ q: '', a: '' });
+    setFormData((prev) => ({ ...prev, faqs: newFaqs }));
+  };
+
+  const handleRemoveFaq = (index: number) => {
+    const newFaqs = (formData.faqs || []).filter((_, i) => i !== index);
+    setFormData((prev) => ({ ...prev, faqs: newFaqs }));
   };
 
   if (!settings) {
@@ -248,6 +265,71 @@ export default function AdminSettingsPage() {
                 className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               />
             </div>
+          </div>
+        </section>
+
+        <hr className="border-slate-100 dark:border-slate-800" />
+
+        {/* Pertanyaan Teratas (FAQ) */}
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Pertanyaan Teratas (FAQ)</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Kelola daftar pertanyaan yang sering diajukan di halaman utama website.</p>
+            </div>
+            <button
+              type="button"
+              onClick={handleAddFaq}
+              className="flex items-center gap-1.5 px-4 py-2 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400 text-sm font-semibold rounded-xl transition-all"
+            >
+              <Plus className="w-4 h-4" />
+              Tambah FAQ
+            </button>
+          </div>
+
+          <div className="space-y-4">
+            {(!formData.faqs || formData.faqs.length === 0) ? (
+              <div className="text-center py-6 text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-950 rounded-xl border border-dashed border-slate-200 dark:border-slate-800">
+                Belum ada FAQ. Ketuk "Tambah FAQ" untuk memulai.
+              </div>
+            ) : (
+              formData.faqs.map((faq, index) => (
+                <div key={index} className="flex gap-4 p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800/60 relative group">
+                  <div className="flex-1 space-y-3">
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Pertanyaan #{index + 1}</label>
+                      <input
+                        type="text"
+                        value={faq.q}
+                        onChange={(e) => handleFaqChange(index, 'q', e.target.value)}
+                        placeholder="Contoh: Berapa minimal durasi sewa?"
+                        className="w-full px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Jawaban</label>
+                      <textarea
+                        value={faq.a}
+                        onChange={(e) => handleFaqChange(index, 'a', e.target.value)}
+                        rows={2}
+                        placeholder="Masukkan jawaban..."
+                        className="w-full px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex flex-col justify-start pt-6">
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveFaq(index)}
+                      className="p-2.5 text-red-500 hover:text-red-600 hover:bg-red-50/50 dark:hover:bg-red-950/20 rounded-xl transition-colors border border-transparent hover:border-red-100 dark:hover:border-red-950/50"
+                      title="Hapus FAQ"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </section>
 

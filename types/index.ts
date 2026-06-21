@@ -17,6 +17,7 @@ export interface SiteSettings {
   contact_phone: string | null;
   contact_email: string | null;
   contact_location: string | null;
+  faqs?: { q: string; a: string }[];
   updated_at: string;
 }
 

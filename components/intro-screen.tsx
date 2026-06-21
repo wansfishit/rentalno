@@ -7,7 +7,7 @@ import { useSiteSettings } from '@/hooks/use-site-settings';
 export default function IntroScreen() {
   const [showIntro, setShowIntro] = useState(true);
   const { settings } = useSiteSettings();
-  const siteTitle = settings?.site_title || 'Rentalno';
+  const siteTitle = settings?.site_title || 'RentAja';
 
   useEffect(() => {
     // Hide intro after 2.5 seconds to allow the majestic intro to play
@@ -55,8 +55,8 @@ export default function IntroScreen() {
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{
-              duration: 1,
-              delay: 0.5,
+              duration: 0.8,
+              delay: 0.3,
               ease: "easeOut"
             }}
             className="relative z-10 flex flex-col items-center gap-6"
@@ -68,7 +68,7 @@ export default function IntroScreen() {
             <motion.div 
               initial={{ width: 0 }}
               animate={{ width: "60px" }}
-              transition={{ delay: 1, duration: 0.8, ease: "easeInOut" }}
+              transition={{ delay: 0.8, duration: 0.6, ease: "easeInOut" }}
               className="h-1 bg-slate-900 dark:bg-white transition-colors duration-1000"
             />
           </motion.div>

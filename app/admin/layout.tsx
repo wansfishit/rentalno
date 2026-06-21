@@ -22,7 +22,7 @@ const NAV_ITEMS = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { user, profile, isAdmin, loading, signOut } = useAuth();
   const { settings } = useSiteSettings();
-  const siteTitle = settings?.site_title || 'Rentalno';
+  const siteTitle = settings?.site_title || 'RentAja';
   const router = useRouter();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);

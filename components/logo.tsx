@@ -21,7 +21,7 @@ export default function Logo({
   textClassName
 }: LogoProps) {
   const { settings } = useSiteSettings();
-  const siteTitle = settings?.site_title || 'Rentalno';
+  const siteTitle = settings?.site_title || 'RentAja';
   
   const sizeMap = {
     sm: 'text-xl',
