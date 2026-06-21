@@ -77,7 +77,8 @@ export default function ReviewsSection() {
     const reviewData = {
       rating,
       comment: data.comment,
-      ...(user ? { user_id: user.id } : { guest_name: data.guest_name || 'Guest' }),
+      user_id: user ? user.id : null,
+      guest_name: user ? (profile?.username || user.email?.split('@')[0] || 'Pelanggan') : (data.guest_name || 'Guest'),
     };
 
     const { success } = await createReview(reviewData);
@@ -198,7 +199,7 @@ export default function ReviewsSection() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {reviews.map((review) => {
-              const name = review.guest_name || (review as any).profiles?.username || 'Pelanggan';
+              const name = review.guest_name || 'Pelanggan';
               const initial = name.charAt(0).toUpperCase();
               
               return (

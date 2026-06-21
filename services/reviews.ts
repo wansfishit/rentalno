@@ -4,7 +4,7 @@ import type { Review } from '@/types';
 export async function getPublicReviews(limit = 6): Promise<Review[]> {
   const { data, error } = await supabase
     .from('reviews')
-    .select('*, profiles(username, avatar_url)')
+    .select('*')
     .order('created_at', { ascending: false })
     .limit(limit);
 
@@ -19,7 +19,7 @@ export async function getPublicReviews(limit = 6): Promise<Review[]> {
 export async function getAllReviewsAdmin(): Promise<Review[]> {
   const { data, error } = await supabase
     .from('reviews')
-    .select('*, profiles(username, avatar_url)')
+    .select('*')
     .order('created_at', { ascending: false });
 
   if (error) {

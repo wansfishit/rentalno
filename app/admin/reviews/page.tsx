@@ -34,7 +34,7 @@ export default function AdminReviewsPage() {
   };
 
   const filteredReviews = reviews.filter(r => {
-    const name = r.guest_name || (r as any).profiles?.username || '';
+    const name = r.guest_name || '';
     return name.toLowerCase().includes(search.toLowerCase()) || 
            r.comment.toLowerCase().includes(search.toLowerCase());
   });
@@ -90,7 +90,7 @@ export default function AdminReviewsPage() {
                 </tr>
               ) : (
                 filteredReviews.map((review) => {
-                  const name = review.guest_name || (review as any).profiles?.username || 'Guest';
+                  const name = review.guest_name || 'Guest';
                   return (
                     <tr key={review.id} className="group">
                       <td className="py-4 text-sm font-medium text-slate-900 dark:text-white">
