@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Star, MessageSquare } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
 import { useForm } from 'react-hook-form';
@@ -57,8 +57,12 @@ export default function ReviewsSection() {
     }
   });
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+
   const fetchReviews = async () => {
-    const data = await getPublicReviews(6);
+    // Increase limit to 20 for a better scrolling experience
+    const data = await getPublicReviews(20);
     setReviews(data);
     setLoading(false);
   };
@@ -66,6 +70,29 @@ export default function ReviewsSection() {
   useEffect(() => {
     fetchReviews();
   }, []);
+
+  // Auto-scroll logic
+  useEffect(() => {
+    if (loading || reviews.length === 0 || isHovered) return;
+
+    let animationFrameId: number;
+    const container = scrollRef.current;
+
+    const scroll = () => {
+      if (container) {
+        container.scrollTop += 0.5; // Auto scroll speed
+        // If reached bottom, loop back to top (optional, or just stop)
+        if (container.scrollTop >= container.scrollHeight - container.clientHeight) {
+          container.scrollTop = 0;
+        }
+      }
+      animationFrameId = requestAnimationFrame(scroll);
+    };
+
+    animationFrameId = requestAnimationFrame(scroll);
+
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [loading, reviews, isHovered]);
 
   const onSubmit = async (data: any) => {
     if (!data.comment.trim()) {
@@ -197,36 +224,58 @@ export default function ReviewsSection() {
             Belum ada ulasan. Jadilah yang pertama memberikan ulasan!
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {reviews.map((review) => {
-              const name = review.guest_name || 'Pelanggan';
-              const initial = name.charAt(0).toUpperCase();
-              
-              return (
-                <motion.div key={review.id} variants={fadeUpVariants} className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex gap-1 mb-4">
-                    {[...Array(review.rating)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    ))}
-                    {[...Array(5 - review.rating)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 text-slate-200" />
-                    ))}
-                  </div>
-                  <p className="text-slate-600 mb-6 line-clamp-4 leading-relaxed">"{review.comment}"</p>
-                  <div className="flex items-center gap-3 mt-auto pt-4 border-t border-slate-100">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-black to-slate-800 flex items-center justify-center text-white font-bold text-sm shadow-inner">
-                      {initial}
+          <div 
+            className="relative bg-white rounded-3xl border border-slate-200 p-2 shadow-sm overflow-hidden"
+          >
+            <div 
+              ref={scrollRef}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              onTouchStart={() => setIsHovered(true)}
+              onTouchEnd={() => setIsHovered(false)}
+              className="h-[500px] overflow-y-auto px-4 py-4 space-y-4 scroll-smooth"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }} // Hide scrollbar for cleaner look
+            >
+              {/* To make scrollbar hidden in webkit: [&::-webkit-scrollbar]:hidden */}
+              <style dangerouslySetInnerHTML={{__html: `
+                .hide-scroll::-webkit-scrollbar { display: none; }
+              `}} />
+              <div className="hide-scroll h-full">
+                {reviews.map((review) => {
+                  const name = review.guest_name || 'Pelanggan';
+                  const initial = name.charAt(0).toUpperCase();
+                  
+                  return (
+                    <div key={review.id} className="bg-slate-50 rounded-2xl border border-slate-100 p-6 shadow-sm hover:shadow-md transition-shadow mb-4">
+                      <div className="flex gap-1 mb-4">
+                        {[...Array(review.rating)].map((_, i) => (
+                          <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                        ))}
+                        {[...Array(5 - review.rating)].map((_, i) => (
+                          <Star key={i} className="w-4 h-4 text-slate-200" />
+                        ))}
+                      </div>
+                      <p className="text-slate-600 mb-6 leading-relaxed">"{review.comment}"</p>
+                      <div className="flex items-center gap-3 mt-auto pt-4 border-t border-slate-200">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-black to-slate-800 flex items-center justify-center text-white font-bold text-sm shadow-inner">
+                          {initial}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-slate-900 text-sm">{name}</p>
+                          <p className="text-xs text-slate-500">
+                            {new Date(review.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-semibold text-slate-900 text-sm">{name}</p>
-                      <p className="text-xs text-slate-500">
-                        {new Date(review.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
+                  );
+                })}
+              </div>
+            </div>
+            
+            {/* Gradient overlays to make scrolling look seamless */}
+            <div className="absolute top-0 left-0 right-0 h-10 bg-gradient-to-b from-white to-transparent pointer-events-none rounded-t-3xl" />
+            <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white to-transparent pointer-events-none rounded-b-3xl" />
           </div>
         )}
       </motion.div>
