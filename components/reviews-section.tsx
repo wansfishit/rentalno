@@ -105,7 +105,7 @@ export default function ReviewsSection() {
       rating,
       comment: data.comment,
       user_id: user ? user.id : null,
-      guest_name: user ? (profile?.username || user.email?.split('@')[0] || 'Pelanggan') : (data.guest_name || 'Guest'),
+      guest_name: user ? (profile?.full_name || user.email?.split('@')[0] || 'Pelanggan') : (data.guest_name || 'Guest'),
     };
 
     const { success } = await createReview(reviewData);
