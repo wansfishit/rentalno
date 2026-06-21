@@ -106,7 +106,7 @@ export default function Footer() {
 
         <div className="border-t border-zinc-900 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-zinc-600">
-            &copy; {new Date().getFullYear()} Rentalno. All rights reserved.
+            &copy; {new Date().getFullYear()} Rentalno All rights reserved.
           </p>
           <div className="flex items-center gap-6 text-sm">
             <Link href="#" className="text-zinc-600 hover:text-white transition-colors">Kebijakan Privasi</Link>

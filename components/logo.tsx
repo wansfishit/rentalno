@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { CarFront } from "lucide-react";
 
 interface LogoProps {
   className?: string;
@@ -35,8 +36,22 @@ export default function Logo({
     blue: 'text-blue-600',
   };
 
+  const iconSizeMap = {
+    sm: 'w-5 h-5',
+    md: 'w-6 h-6',
+    lg: 'w-8 h-8',
+    xl: 'w-10 h-10 md:w-14 md:h-14',
+  };
+
+  const iconVariantMap = {
+    dark: 'text-slate-900',
+    light: 'text-white',
+    blue: 'text-blue-600',
+  };
+
   return (
-    <div className={cn("flex items-center", className)}>
+    <div className={cn("flex items-center gap-2", className)}>
+      <CarFront className={cn(iconSizeMap[size], iconVariantMap[variant])} />
       <span 
         className={cn(
           "font-bold tracking-tight",
@@ -46,7 +61,7 @@ export default function Logo({
         )} 
         style={{ fontFamily: 'var(--font-jakarta)' }}
       >
-        Rentalno<span className={dotVariantMap[variant]}>.</span>
+        Rentalno
       </span>
     </div>
   );

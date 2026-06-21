@@ -58,7 +58,7 @@ export default function IntroScreen() {
             className="relative z-10 flex flex-col items-center gap-6"
           >
             <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight" style={{ fontFamily: 'var(--font-jakarta)' }}>
-              Rentalno.
+              Rentalno
             </h1>
             
             <motion.div 
