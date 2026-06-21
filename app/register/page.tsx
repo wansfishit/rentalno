@@ -27,7 +27,6 @@ type FormData = z.infer<typeof schema>;
 export default function RegisterPage() {
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { signUp } = useAuth();
   const { settings } = useSiteSettings();
   const siteTitle = settings?.site_title || 'Rentalno';
   const router = useRouter();
