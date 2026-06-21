@@ -52,7 +52,7 @@ export default function CarCard({ car }: CarCardProps) {
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: false, amount: 0.1 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="mb-4"
           >
@@ -66,7 +66,7 @@ export default function CarCard({ car }: CarCardProps) {
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: false, amount: 0.1 }}
             transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
             className="flex items-center gap-4 mb-6 text-sm text-zinc-600 dark:text-zinc-400"
           >
@@ -90,7 +90,7 @@ export default function CarCard({ car }: CarCardProps) {
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: false, amount: 0.1 }}
             transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
             className="flex items-end justify-between pt-5 border-t border-zinc-100 dark:border-zinc-800/80"
           >
