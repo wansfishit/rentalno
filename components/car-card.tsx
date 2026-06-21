@@ -14,9 +14,9 @@ interface CarCardProps {
 export default function CarCard({ car }: CarCardProps) {
   return (
     <Link href={`/cars/detail?id=${car.id}`} className="group block">
-      <div className="bg-white dark:bg-zinc-950 rounded-[24px] border border-zinc-200/80 dark:border-zinc-800/80 overflow-hidden hover:shadow-2xl hover:shadow-black/5 hover:-translate-y-1 transition-all duration-300 group-hover:border-zinc-300 dark:group-hover:border-zinc-700">
+      <div className="bg-white dark:bg-[#0A0A0A] rounded-[24px] overflow-hidden shadow-sm dark:shadow-none hover:shadow-2xl dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] hover:-translate-y-2 transition-all duration-500 border border-slate-200 dark:border-white/5 group-hover:border-primary/30 dark:group-hover:border-primary/30">
         {/* Image */}
-        <div className="relative aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-zinc-100 dark:bg-zinc-900">
+        <div className="relative aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-slate-100 dark:bg-black">
           {car.image_urls && car.image_urls.length > 0 ? (
             <div className="w-full h-full flex overflow-x-auto snap-x snap-mandatory scrollbar-hide">
               {car.image_urls.map((url, i) => (
@@ -24,13 +24,13 @@ export default function CarCard({ car }: CarCardProps) {
                   <img
                     src={url}
                     alt={`${car.brand} ${car.model} - Foto ${i + 1}`}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]"
                   />
                   {/* Dots indicator */}
                   {car.image_urls && car.image_urls.length > 1 && (
                     <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
                       {car.image_urls.map((_, idx) => (
-                        <div key={idx} className={`w-1.5 h-1.5 rounded-full ${i === idx ? 'bg-white' : 'bg-white/50'}`} />
+                        <div key={idx} className={`w-1.5 h-1.5 rounded-full ${i === idx ? 'bg-primary' : 'bg-white/50 dark:bg-white/30'}`} />
                       ))}
                     </div>
                   )}
@@ -41,27 +41,27 @@ export default function CarCard({ car }: CarCardProps) {
             <img
               src={car.image_url}
               alt={`${car.brand} ${car.model}`}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <span className="text-zinc-300 text-4xl">🚗</span>
+              <span className="text-slate-300 dark:text-white/20 text-4xl">🚗</span>
             </div>
           )}
           
           <div className="absolute top-4 left-4 flex gap-2">
             <Badge
               variant="secondary"
-              className={`px-3 py-1 text-xs font-semibold backdrop-blur-md border-0 ${car.available
-                ? 'bg-white/90 text-zinc-900 dark:bg-black/90 dark:text-white'
-                : 'bg-red-500/90 text-white dark:bg-red-500/90'
+              className={`px-4 py-1.5 text-xs font-bold uppercase tracking-wider backdrop-blur-xl border border-slate-200/50 dark:border-white/10 ${car.available
+                ? 'bg-white/80 dark:bg-black/50 text-slate-900 dark:text-white'
+                : 'bg-red-50 dark:bg-red-900/80 text-red-600 dark:text-white'
               }`}
             >
               {car.available ? 'Tersedia' : 'Disewa'}
             </Badge>
           </div>
           <div className="absolute top-4 right-4">
-            <Badge variant="secondary" className="px-3 py-1 text-xs font-semibold bg-black/40 text-white backdrop-blur-md border-0 hover:bg-black/60">
+            <Badge variant="secondary" className="px-4 py-1.5 text-xs font-bold uppercase tracking-wider bg-white/80 dark:bg-black/50 text-primary backdrop-blur-xl border border-slate-200/50 dark:border-white/10">
               {car.category}
             </Badge>
           </div>
@@ -76,10 +76,10 @@ export default function CarCard({ car }: CarCardProps) {
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="mb-4"
           >
-            <h3 className="font-bold text-xl text-zinc-900 dark:text-white tracking-tight group-hover:text-zinc-600 transition-colors">
+            <h3 className="font-bold text-2xl text-slate-900 dark:text-white tracking-tight group-hover:text-primary dark:group-hover:text-primary transition-colors duration-300">
               {car.brand} {car.model}
             </h3>
-            <p className="text-sm text-zinc-500 font-medium mt-1">{car.year}</p>
+            <p className="text-sm text-slate-500 dark:text-zinc-400 font-medium mt-1">{car.year}</p>
           </motion.div>
 
           {/* Specs */}
@@ -88,20 +88,20 @@ export default function CarCard({ car }: CarCardProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.1 }}
             transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
-            className="flex items-center gap-4 mb-6 text-sm text-zinc-600 dark:text-zinc-400"
+            className="flex items-center gap-4 mb-8 text-sm text-slate-600 dark:text-zinc-400 font-medium"
           >
-            <div className="flex items-center gap-1.5">
-              <Users className="w-4 h-4 text-zinc-400" />
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-primary" />
               <span>{car.seats}</span>
             </div>
-            <div className="w-1 h-1 rounded-full bg-zinc-300 dark:bg-zinc-700" />
-            <div className="flex items-center gap-1.5">
-              <Settings className="w-4 h-4 text-zinc-400" />
+            <div className="w-1 h-1 rounded-full bg-slate-200 dark:bg-white/20" />
+            <div className="flex items-center gap-2">
+              <Settings className="w-4 h-4 text-primary" />
               <span>{car.transmission === 'Automatic' ? 'Auto' : 'Manual'}</span>
             </div>
-            <div className="w-1 h-1 rounded-full bg-zinc-300 dark:bg-zinc-700" />
-            <div className="flex items-center gap-1.5">
-              <Fuel className="w-4 h-4 text-zinc-400" />
+            <div className="w-1 h-1 rounded-full bg-slate-200 dark:bg-white/20" />
+            <div className="flex items-center gap-2">
+              <Fuel className="w-4 h-4 text-primary" />
               <span>{car.fuel_type}</span>
             </div>
           </motion.div>
@@ -112,19 +112,19 @@ export default function CarCard({ car }: CarCardProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.1 }}
             transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
-            className="flex items-end justify-between pt-5 border-t border-zinc-100 dark:border-zinc-800/80"
+            className="flex items-end justify-between pt-6 border-t border-slate-100 dark:border-white/5"
           >
             <div>
-              <p className="text-[10px] sm:text-xs text-zinc-400 font-semibold uppercase tracking-widest mb-1">Mulai Dari</p>
+              <p className="text-[10px] sm:text-xs text-slate-400 dark:text-zinc-500 font-bold uppercase tracking-widest mb-1">Mulai Dari</p>
               <div className="flex items-baseline gap-1">
-                <span className="font-bold text-xl sm:text-2xl text-zinc-900 dark:text-white tracking-tight">
+                <span className="font-bold text-2xl sm:text-3xl text-slate-900 dark:text-white tracking-tighter">
                   {formatCurrency(car.price_per_day)}
                 </span>
-                <span className="text-sm text-zinc-500">/hari</span>
+                <span className="text-sm text-slate-500 dark:text-zinc-500 font-medium">/hari</span>
               </div>
             </div>
             
-            <div className="w-11 h-11 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-600 dark:text-zinc-400 group-hover:bg-black group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-black transition-all duration-300 transform group-hover:rotate-[-45deg]">
+            <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-900 dark:text-white group-hover:bg-primary dark:group-hover:bg-primary group-hover:text-primary-foreground dark:group-hover:text-primary-foreground group-hover:shadow-[0_0_20px_rgba(214,175,54,0.3)] dark:group-hover:shadow-[0_0_20px_rgba(214,175,54,0.5)] transition-all duration-500 transform group-hover:rotate-[-45deg] group-hover:scale-110">
               <ArrowRight className="w-5 h-5" />
             </div>
           </motion.div>

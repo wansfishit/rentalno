@@ -31,10 +31,10 @@ export default function IntroScreen() {
               ease: [0.76, 0, 0.24, 1] 
             } 
           }}
-          className="fixed inset-0 z-[100] bg-black flex items-center justify-center overflow-hidden"
+          className="fixed inset-0 z-[100] bg-white dark:bg-black flex items-center justify-center overflow-hidden transition-colors duration-1000"
         >
           {/* Elegant Dark Background */}
-          <div className="absolute inset-0 bg-slate-950 z-0">
+          <div className="absolute inset-0 bg-slate-50 dark:bg-slate-950 z-0 transition-colors duration-1000">
             {/* Subtle animated gradient glow */}
             <motion.div
               animate={{ 
@@ -61,7 +61,7 @@ export default function IntroScreen() {
             }}
             className="relative z-10 flex flex-col items-center gap-6"
           >
-            <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight" style={{ fontFamily: 'var(--font-jakarta)' }}>
+            <h1 className="text-5xl md:text-7xl font-bold text-slate-900 dark:text-white tracking-tight transition-colors duration-1000" style={{ fontFamily: 'var(--font-jakarta)' }}>
               {siteTitle}
             </h1>
             
@@ -69,7 +69,7 @@ export default function IntroScreen() {
               initial={{ width: 0 }}
               animate={{ width: "60px" }}
               transition={{ delay: 1, duration: 0.8, ease: "easeInOut" }}
-              className="h-1 bg-white"
+              className="h-1 bg-slate-900 dark:bg-white transition-colors duration-1000"
             />
           </motion.div>
         </motion.div>

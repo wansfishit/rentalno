@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import {
-  Users, Fuel, Settings, Star, Check, ArrowLeft, Loader2, Calendar, MapPin
+  Users, Fuel, Settings, Star, Check, ArrowLeft, Loader2, Calendar, MapPin, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { getCarById } from '@/services/cars';
@@ -35,6 +35,15 @@ export default function CarDetailClient() {
 
   const searchParams = useSearchParams();
   const id = searchParams.get('id');
+  const sliderRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (sliderRef.current) {
+      const { clientWidth, scrollLeft } = sliderRef.current;
+      const scrollTo = direction === 'left' ? scrollLeft - clientWidth : scrollLeft + clientWidth;
+      sliderRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+    }
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -55,7 +64,10 @@ export default function CarDetailClient() {
           if (data?.discount_rate) setDiscountRate(data.discount_rate);
         });
     }
-  }, [user]);
+    if (profile?.full_name && !guestName) {
+      setGuestName(profile.full_name);
+    }
+  }, [user, profile]);
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -123,8 +135,8 @@ export default function CarDetailClient() {
       toast.error('Mobil tidak tersedia saat ini');
       return;
     }
-    if (!isMember && (!guestName || !guestPhone)) {
-      toast.error('Mohon lengkapi data diri dasar (Nama & WA) untuk melanjutkan');
+    if (!guestName || (!isMember && !guestPhone)) {
+      toast.error('Mohon lengkapi Nama Lengkap (dan No. WA untuk guest) untuk melanjutkan');
       return;
     }
 
@@ -138,7 +150,7 @@ export default function CarDetailClient() {
         total_days: totalDays,
         total_price: totalPrice,
         notes: notes || null,
-        guest_name: isMember ? user?.user_metadata?.full_name : guestName,
+        guest_name: guestName,
         guest_phone: guestPhone,
         guest_address: '-', // Set to dash since address is removed
         guest_location: guestLocation,
@@ -148,7 +160,7 @@ export default function CarDetailClient() {
       
       // Build WhatsApp Message
       const adminPhone = settings?.contact_phone?.replace(/[^0-9]/g, '') || '6281378821654';
-      const customerName = isMember ? user?.user_metadata?.full_name : guestName;
+      const customerName = guestName;
       const waMessage = `Halo Rentalno, saya ingin menyewa mobil:
       
 *Detail Mobil:*
@@ -218,27 +230,48 @@ Mohon konfirmasinya. Terima kasih!`;
         {/* Left - Car Info */}
         <div className="lg:col-span-2 space-y-6">
           {/* Image */}
-          <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 relative">
+          <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 relative group">
             {car.image_urls && car.image_urls.length > 0 ? (
-              <div className="w-full h-full flex overflow-x-auto snap-x snap-mandatory scrollbar-hide">
-                {car.image_urls.map((url, i) => (
-                  <div key={i} className="w-full h-full shrink-0 snap-center relative">
-                    <img
-                      src={url}
-                      alt={`${car.brand} ${car.model} - foto ${i + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                    {/* CSS-only active dot indicator trick */}
-                    {car.image_urls && car.image_urls.length > 1 && (
-                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-                        {car.image_urls.map((_, idx) => (
-                          <div key={idx} className={`w-2 h-2 rounded-full ${i === idx ? 'bg-white' : 'bg-white/50'}`} />
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
+              <>
+                <div 
+                  ref={sliderRef}
+                  className="w-full h-full flex overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+                >
+                  {car.image_urls.map((url, i) => (
+                    <div key={i} className="w-full h-full shrink-0 snap-center relative">
+                      <img
+                        src={url}
+                        alt={`${car.brand} ${car.model} - foto ${i + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                      {/* CSS-only active dot indicator trick */}
+                      {car.image_urls && car.image_urls.length > 1 && (
+                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                          {car.image_urls.map((_, idx) => (
+                            <div key={idx} className={`w-2 h-2 rounded-full ${i === idx ? 'bg-white' : 'bg-white/50'}`} />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                {car.image_urls.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => scroll('left')}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm z-20"
+                    >
+                      <ChevronLeft className="w-6 h-6" />
+                    </button>
+                    <button
+                      onClick={() => scroll('right')}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm z-20"
+                    >
+                      <ChevronRight className="w-6 h-6" />
+                    </button>
+                  </>
+                )}
+              </>
             ) : car.image_url ? (
               <img
                 src={car.image_url}
@@ -385,19 +418,15 @@ Mohon konfirmasinya. Terima kasih!`;
                   </div>
                 )}
 
-                {!isMember && (
-                  <>
-                    <div>
-                      <input
-                        type="text"
-                        value={guestName}
-                        onChange={(e) => setGuestName(e.target.value)}
-                        placeholder="Nama Lengkap"
-                        className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                  </>
-                )}
+                <div>
+                  <input
+                    type="text"
+                    value={guestName}
+                    onChange={(e) => setGuestName(e.target.value)}
+                    placeholder="Nama Lengkap"
+                    className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
 
                 <div>
                   <input

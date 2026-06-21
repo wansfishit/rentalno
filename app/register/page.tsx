@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Logo from '@/components/logo';
 import { Car, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -80,14 +81,11 @@ export default function RegisterPage() {
       {/* Right - Form */}
       <div className="flex-1 flex items-center justify-center px-6 py-12 bg-white dark:bg-slate-950">
         <div className="w-full max-w-sm">
-          <Link href="/" className="flex items-center gap-2 mb-10">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Car className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-semibold text-lg text-slate-900 dark:text-white">
-              Rent<span className="text-blue-600">ino</span>
-            </span>
-          </Link>
+          <div className="mb-10">
+            <Link href="/">
+              <Logo size="lg" />
+            </Link>
+          </div>
 
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-1.5">Buat akun baru</h1>
