@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Car, LayoutDashboard, ListOrdered, Users, LogOut, Menu, X, ChevronRight, MessageSquare, Settings } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
+import { useSiteSettings } from '@/hooks/use-site-settings';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -20,6 +21,8 @@ const NAV_ITEMS = [
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { user, profile, isAdmin, loading, signOut } = useAuth();
+  const { settings } = useSiteSettings();
+  const siteTitle = settings?.site_title || 'Rentalno';
   const router = useRouter();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -65,7 +68,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Car className="w-3.5 h-3.5 text-white" />
             </div>
             <span className="font-semibold text-white text-sm">
-              Rent<span className="text-blue-400">Aja</span>
+              {siteTitle}
               <span className="text-slate-500 ml-1">Admin</span>
             </span>
           </Link>

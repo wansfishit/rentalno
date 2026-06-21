@@ -2,9 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSiteSettings } from '@/hooks/use-site-settings';
 
 export default function IntroScreen() {
   const [showIntro, setShowIntro] = useState(true);
+  const { settings } = useSiteSettings();
+  const siteTitle = settings?.site_title || 'Rentalno';
 
   useEffect(() => {
     // Hide intro after 2.5 seconds to allow the majestic intro to play
@@ -58,7 +61,7 @@ export default function IntroScreen() {
             className="relative z-10 flex flex-col items-center gap-6"
           >
             <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight" style={{ fontFamily: 'var(--font-jakarta)' }}>
-              Rentalno
+              {siteTitle}
             </h1>
             
             <motion.div 
