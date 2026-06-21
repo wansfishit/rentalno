@@ -52,7 +52,7 @@ export default function ReviewsSection() {
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: {
-      guest_name: profile?.username || '',
+      guest_name: profile?.full_name || '',
       comment: '',
     }
   });
