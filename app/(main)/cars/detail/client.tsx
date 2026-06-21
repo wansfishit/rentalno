@@ -130,7 +130,7 @@ export default function CarDetailClient() {
       toast.success('Booking berhasil! Mengalihkan ke WhatsApp...');
       
       // Build WhatsApp Message
-      const adminPhone = '6281234567890'; // Change this to the actual admin WA number
+      const adminPhone = '6281378821654'; // User's WhatsApp number
       const customerName = isMember ? user?.user_metadata?.full_name : guestName;
       const waMessage = `Halo Rentalno, saya ingin menyewa mobil:
       
