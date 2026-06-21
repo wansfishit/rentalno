@@ -33,7 +33,7 @@ export default function Logo({
   const textVariantMap = {
     dark: 'text-slate-900',
     light: 'text-white',
-    blue: 'text-slate-900',
+    blue: 'text-slate-900 dark:text-white',
   };
 
   const dotVariantMap = {

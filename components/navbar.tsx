@@ -203,7 +203,7 @@ export default function Navbar() {
                 </>
               ) : (
                 <div className="flex flex-col gap-3 pt-2">
-                  <Link href="/login" className="block px-4 py-3 rounded-full border border-white/20 text-sm font-bold text-center text-white hover:bg-white/5 uppercase tracking-wide">
+                  <Link href="/login" className="block px-4 py-3 rounded-full border border-slate-200 dark:border-white/20 text-sm font-bold text-center text-slate-800 dark:text-white hover:bg-slate-50 dark:hover:bg-white/5 uppercase tracking-wide">
                     Masuk
                   </Link>
                   <Link href="/register" className="block px-4 py-3 rounded-full text-sm font-bold bg-primary text-primary-foreground text-center shadow-[0_0_15px_rgba(214,175,54,0.3)] uppercase tracking-wide">
