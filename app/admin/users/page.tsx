@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Users, Shield } from 'lucide-react';
+import { Users, Shield, Percent } from 'lucide-react';
+import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 import type { Profile } from '@/types';
 import { formatDate } from '@/lib/utils';
@@ -21,6 +22,24 @@ export default function AdminUsersPage() {
       });
   }, []);
 
+  const handleUpdateDiscount = async (userId: string, newRate: number) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ discount_rate: newRate })
+        .eq('id', userId);
+        
+      if (error) throw error;
+      
+      setUsers((prev) =>
+        prev.map((u) => (u.id === userId ? { ...u, discount_rate: newRate } : u))
+      );
+      toast.success('Promo berhasil diperbarui');
+    } catch {
+      toast.error('Gagal memperbarui promo');
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -33,7 +52,7 @@ export default function AdminUsersPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-slate-100 dark:border-slate-800">
-                {['Pengguna', 'Nomor HP', 'Role', 'Bergabung'].map((h) => (
+                {['Pengguna', 'Nomor HP', 'Role', 'Bergabung', 'Promo (%)'].map((h) => (
                   <th key={h} className="text-left px-4 py-3.5 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                     {h}
                   </th>
@@ -53,7 +72,7 @@ export default function AdminUsersPage() {
                 ))
               ) : users.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="text-center py-12 text-slate-400">
+                  <td colSpan={5} className="text-center py-12 text-slate-400">
                     Belum ada pengguna
                   </td>
                 </tr>
@@ -91,6 +110,24 @@ export default function AdminUsersPage() {
                       <span className="text-sm text-slate-500 dark:text-slate-400">
                         {formatDate(user.created_at)}
                       </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          min="0"
+                          max="100"
+                          defaultValue={user.discount_rate || 0}
+                          onBlur={(e) => {
+                            const val = parseInt(e.target.value) || 0;
+                            if (val !== (user.discount_rate || 0)) {
+                              handleUpdateDiscount(user.id, val);
+                            }
+                          }}
+                          className="w-16 px-2 py-1 text-sm border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900 dark:text-white"
+                        />
+                        <span className="text-sm text-slate-500">%</span>
+                      </div>
                     </td>
                   </tr>
                 ))

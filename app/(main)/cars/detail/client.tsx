@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { getCarById } from '@/services/cars';
 import { createBooking } from '@/services/bookings';
 import { useAuth } from '@/hooks/use-auth';
+import { supabase } from '@/lib/supabase';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import type { Car } from '@/types';
 
@@ -25,6 +26,7 @@ export default function CarDetailClient() {
   const [guestPhone, setGuestPhone] = useState('');
   const [guestLocation, setGuestLocation] = useState('');
   const [isGettingLocation, setIsGettingLocation] = useState(false);
+  const [discountRate, setDiscountRate] = useState(0);
   
   const { user } = useAuth();
   const router = useRouter();
@@ -40,6 +42,19 @@ export default function CarDetailClient() {
       .finally(() => setLoading(false));
   }, [id]);
 
+  useEffect(() => {
+    if (user?.id) {
+      supabase
+        .from('profiles')
+        .select('discount_rate')
+        .eq('id', user.id)
+        .single()
+        .then(({ data }) => {
+          if (data?.discount_rate) setDiscountRate(data.discount_rate);
+        });
+    }
+  }, [user]);
+
   const today = new Date().toISOString().split('T')[0];
 
   const totalDays =
@@ -54,9 +69,9 @@ export default function CarDetailClient() {
       : 0;
 
   let basePrice = car ? totalDays * car.price_per_day : 0;
-  // Apply 10% discount if user is logged in
+  // Apply custom discount from profile
   const isMember = !!user;
-  const discountAmount = isMember ? basePrice * 0.10 : 0;
+  const discountAmount = basePrice * (discountRate / 100);
   const totalPrice = basePrice - discountAmount;
 
   const handleGetLocation = () => {
@@ -364,7 +379,7 @@ Mohon konfirmasinya. Terima kasih!`;
                 {!isMember && (
                   <div className="bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 text-xs p-3 rounded-lg border border-blue-200 dark:border-blue-800/30">
                     <p className="font-semibold mb-1">Anda booking sebagai Guest.</p>
-                    <p>Daftar/Login sekarang untuk mendapatkan <strong>Diskon 10%</strong> otomatis di setiap booking!</p>
+                    <p>Daftar/Login sekarang untuk menikmati fitur khusus member dan promo eksklusif!</p>
                   </div>
                 )}
 
@@ -430,9 +445,9 @@ Mohon konfirmasinya. Terima kasih!`;
                      </span>
                   </div>
                   
-                  {isMember && (
+                  {discountRate > 0 && (
                     <div className="flex justify-between text-sm text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-50 dark:bg-emerald-900/20 p-2 rounded-lg -mx-2 px-2">
-                      <span>Promo Member (10%)</span>
+                      <span>Promo Member ({discountRate}%)</span>
                       <span>-{formatCurrency(discountAmount)}</span>
                     </div>
                   )}
