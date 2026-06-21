@@ -24,8 +24,6 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { settings } = useSiteSettings();
-  const siteTitle = settings?.site_title || 'Rentalno';
   const redirect = searchParams.get('redirect') || '/';
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
@@ -107,6 +105,9 @@ function LoginForm() {
 }
 
 export default function LoginPage() {
+  const { settings } = useSiteSettings();
+  const siteTitle = settings?.site_title || 'Rentalno';
+
   return (
     <div className="min-h-screen flex">
       {/* Left - Form */}
