@@ -21,10 +21,8 @@ export default function CarDetailClient() {
   const [endDate, setEndDate] = useState('');
   const [notes, setNotes] = useState('');
   
-  // Guest Details
   const [guestName, setGuestName] = useState('');
   const [guestPhone, setGuestPhone] = useState('');
-  const [guestAddress, setGuestAddress] = useState('');
   const [guestLocation, setGuestLocation] = useState('');
   const [isGettingLocation, setIsGettingLocation] = useState(false);
   
@@ -108,8 +106,8 @@ export default function CarDetailClient() {
       toast.error('Mobil tidak tersedia saat ini');
       return;
     }
-    if (!isMember && (!guestName || !guestPhone || !guestAddress || !guestLocation)) {
-      toast.error('Mohon lengkapi semua data diri (Nama, WA, Alamat, ShareLoc) untuk melanjutkan');
+    if (!isMember && (!guestName || !guestPhone || !guestLocation)) {
+      toast.error('Mohon lengkapi semua data diri (Nama, WA, ShareLoc) untuk melanjutkan');
       return;
     }
 
@@ -125,15 +123,36 @@ export default function CarDetailClient() {
         notes: notes || null,
         guest_name: isMember ? user?.user_metadata?.full_name : guestName,
         guest_phone: guestPhone,
-        guest_address: guestAddress,
+        guest_address: '-', // Set to dash since address is removed
         guest_location: guestLocation,
       });
-      toast.success('Booking berhasil! Tim kami akan segera menghubungi via WhatsApp.');
-      if (isMember) {
-        router.push('/profile');
-      } else {
-        router.push('/cars');
-      }
+      
+      toast.success('Booking berhasil! Mengalihkan ke WhatsApp...');
+      
+      // Build WhatsApp Message
+      const adminPhone = '6281234567890'; // Change this to the actual admin WA number
+      const customerName = isMember ? user?.user_metadata?.full_name : guestName;
+      const waMessage = `Halo Rentalno, saya ingin menyewa mobil:
+      
+*Detail Mobil:*
+- Mobil: ${car?.brand} ${car?.model}
+- Tanggal Sewa: ${formatDate(startDate)} s/d ${formatDate(endDate)} (${totalDays} hari)
+- Total Harga: ${formatCurrency(totalPrice)}
+
+*Data Pemesan:*
+- Nama: ${customerName}
+- No. WA: ${guestPhone}
+- Lokasi Jemput/Antar: ${guestLocation}
+${notes ? `- Catatan: ${notes}` : ''}
+
+Mohon konfirmasinya. Terima kasih!`;
+
+      const encodedMessage = encodeURIComponent(waMessage);
+      const waUrl = `https://wa.me/${adminPhone}?text=${encodedMessage}`;
+      
+      // Redirect to WhatsApp
+      window.location.href = waUrl;
+      
     } catch (err: any) {
       toast.error(err.message || 'Gagal membuat booking');
     } finally {
@@ -370,15 +389,6 @@ export default function CarDetailClient() {
                     onChange={(e) => setGuestPhone(e.target.value)}
                     placeholder="Nomor WhatsApp"
                     className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <textarea
-                    value={guestAddress}
-                    onChange={(e) => setGuestAddress(e.target.value)}
-                    rows={2}
-                    placeholder="Alamat Lengkap Pengiriman Mobil"
-                    className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
