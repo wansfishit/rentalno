@@ -33,21 +33,22 @@ export default function IntroScreen() {
           }}
           className="fixed inset-0 z-[100] bg-black flex items-center justify-center overflow-hidden"
         >
-          {/* Majestic Car Background Image */}
-          <motion.div
-            initial={{ scale: 1.1, opacity: 0 }}
-            animate={{ scale: 1, opacity: 0.6 }}
-            transition={{ duration: 2.5, ease: "easeOut" }}
-            className="absolute inset-0 z-0"
-          >
-            <img 
-              src="https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop"
-              alt="Luxury Car"
-              className="w-full h-full object-cover"
+          {/* Elegant Dark Background */}
+          <div className="absolute inset-0 bg-slate-950 z-0">
+            {/* Subtle animated gradient glow */}
+            <motion.div
+              animate={{ 
+                scale: [1, 1.2, 1],
+                opacity: [0.3, 0.5, 0.3],
+              }}
+              transition={{ 
+                duration: 4, 
+                repeat: Infinity,
+                ease: "easeInOut" 
+              }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] md:w-[40vw] md:h-[40vw] bg-blue-600/20 rounded-full blur-[100px]"
             />
-            {/* Dark gradient overlay for text readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-          </motion.div>
+          </div>
 
           {/* Intro Text */}
           <motion.div
