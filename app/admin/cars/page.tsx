@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Pencil, Trash2, Loader2, Search, Sparkles, X, Check } from 'lucide-react';
 import { toast } from 'sonner';
+import { supabase } from '@/lib/supabase';
 import { getAllCarsAdmin, createCar, updateCar, deleteCar, DUMMY_CARS } from '@/services/cars';
 import { formatCurrency } from '@/lib/utils';
 import type { Car, CarCategory, Transmission, FuelType } from '@/types';
@@ -15,7 +16,7 @@ const EMPTY_FORM = {
   fuel_type: 'Bensin' as FuelType,
   seats: 5,
   price_per_day: 500000,
-  image_url: '',
+  image_urls: [] as string[],
   description: '',
   features: '',
   available: true,
@@ -63,13 +64,56 @@ export default function AdminCarsPage() {
       fuel_type: car.fuel_type,
       seats: car.seats,
       price_per_day: car.price_per_day,
-      image_url: car.image_url || '',
+      image_urls: car.image_urls || (car.image_url ? [car.image_url] : []),
       description: car.description || '',
       features: car.features?.join(', ') || '',
       available: car.available,
       category: car.category,
     });
     setModalOpen(true);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    if (form.image_urls.length + files.length > 3) {
+      toast.error('Maksimal 3 foto per mobil');
+      return;
+    }
+    
+    setSaving(true);
+    try {
+      const newUrls = [...form.image_urls];
+      for (const file of files) {
+        const ext = file.name.split('.').pop();
+        const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${ext}`;
+        
+        const { data, error } = await supabase.storage
+          .from('car-images')
+          .upload(fileName, file);
+          
+        if (error) throw error;
+        
+        const { data: publicUrlData } = supabase.storage
+          .from('car-images')
+          .getPublicUrl(fileName);
+          
+        newUrls.push(publicUrlData.publicUrl);
+      }
+      setForm({ ...form, image_urls: newUrls });
+      toast.success('Foto berhasil diunggah');
+    } catch (error: any) {
+      toast.error('Gagal mengunggah foto: ' + error.message);
+    } finally {
+      setSaving(false);
+      if (e.target) e.target.value = ''; // Reset input
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    const newUrls = [...form.image_urls];
+    newUrls.splice(index, 1);
+    setForm({ ...form, image_urls: newUrls });
   };
 
   const handleSave = async () => {
@@ -82,7 +126,8 @@ export default function AdminCarsPage() {
       const payload = {
         ...form,
         features: form.features ? form.features.split(',').map((f) => f.trim()).filter(Boolean) : [],
-        image_url: form.image_url || null,
+        image_urls: form.image_urls,
+        image_url: form.image_urls.length > 0 ? form.image_urls[0] : null,
         description: form.description || null,
       };
 
@@ -216,7 +261,9 @@ export default function AdminCarsPage() {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-700 shrink-0">
-                          {car.image_url ? (
+                          {car.image_urls && car.image_urls.length > 0 ? (
+                            <img src={car.image_urls[0]} alt="" className="w-full h-full object-cover" />
+                          ) : car.image_url ? (
                             <img src={car.image_url} alt="" className="w-full h-full object-cover" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-lg">🚗</div>
@@ -397,16 +444,31 @@ export default function AdminCarsPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">URL Gambar</label>
+                <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Foto Mobil (Maks. 3)</label>
                 <input
-                  value={form.image_url}
-                  onChange={(e) => setForm({ ...form, image_url: e.target.value })}
-                  placeholder="https://images.unsplash.com/..."
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  disabled={saving || form.image_urls.length >= 3}
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
                 />
-                {form.image_url && (
-                  <div className="mt-2 w-full h-32 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-700">
-                    <img src={form.image_url} alt="Preview" className="w-full h-full object-cover" />
+                <p className="text-[10px] text-slate-500 mt-1">Unggah foto dari galeri (HP/Komputer). Anda dapat memilih lebih dari satu sekaligus.</p>
+                
+                {form.image_urls.length > 0 && (
+                  <div className="mt-3 grid grid-cols-3 gap-2">
+                    {form.image_urls.map((url, idx) => (
+                      <div key={idx} className="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-700 group">
+                        <img src={url} alt={`Preview ${idx + 1}`} className="w-full h-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage(idx)}
+                          className="absolute top-1.5 right-1.5 p-1 bg-red-500/90 hover:bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-sm backdrop-blur-sm"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>

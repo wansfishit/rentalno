@@ -17,7 +17,27 @@ export default function CarCard({ car }: CarCardProps) {
       <div className="bg-white dark:bg-zinc-950 rounded-[24px] border border-zinc-200/80 dark:border-zinc-800/80 overflow-hidden hover:shadow-2xl hover:shadow-black/5 hover:-translate-y-1 transition-all duration-300 group-hover:border-zinc-300 dark:group-hover:border-zinc-700">
         {/* Image */}
         <div className="relative aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-zinc-100 dark:bg-zinc-900">
-          {car.image_url ? (
+          {car.image_urls && car.image_urls.length > 0 ? (
+            <div className="w-full h-full flex overflow-x-auto snap-x snap-mandatory scrollbar-hide">
+              {car.image_urls.map((url, i) => (
+                <div key={i} className="w-full h-full shrink-0 snap-center relative">
+                  <img
+                    src={url}
+                    alt={`${car.brand} ${car.model} - Foto ${i + 1}`}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  />
+                  {/* Dots indicator */}
+                  {car.image_urls && car.image_urls.length > 1 && (
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                      {car.image_urls.map((_, idx) => (
+                        <div key={idx} className={`w-1.5 h-1.5 rounded-full ${i === idx ? 'bg-white' : 'bg-white/50'}`} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : car.image_url ? (
             <img
               src={car.image_url}
               alt={`${car.brand} ${car.model}`}

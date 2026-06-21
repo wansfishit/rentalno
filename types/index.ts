@@ -24,6 +24,7 @@ export interface Car {
   seats: number;
   price_per_day: number;
   image_url: string | null;
+  image_urls?: string[];
   description: string | null;
   features: string[];
   available: boolean;

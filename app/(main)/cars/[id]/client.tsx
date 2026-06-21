@@ -178,8 +178,28 @@ export default function CarDetailPage({ params }: { params: { id: string } }) {
         {/* Left - Car Info */}
         <div className="lg:col-span-2 space-y-6">
           {/* Image */}
-          <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800">
-            {car.image_url ? (
+          <div className="aspect-[16/9] rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 relative">
+            {car.image_urls && car.image_urls.length > 0 ? (
+              <div className="w-full h-full flex overflow-x-auto snap-x snap-mandatory scrollbar-hide">
+                {car.image_urls.map((url, i) => (
+                  <div key={i} className="w-full h-full shrink-0 snap-center relative">
+                    <img
+                      src={url}
+                      alt={`${car.brand} ${car.model} - foto ${i + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                    {/* CSS-only active dot indicator trick */}
+                    {car.image_urls && car.image_urls.length > 1 && (
+                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                        {car.image_urls.map((_, idx) => (
+                          <div key={idx} className={`w-2 h-2 rounded-full ${i === idx ? 'bg-white' : 'bg-white/50'}`} />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : car.image_url ? (
               <img
                 src={car.image_url}
                 alt={`${car.brand} ${car.model}`}
