@@ -195,7 +195,7 @@ export default function HomePage() {
         <motion.div 
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: false, amount: 0.2 }}
           variants={staggerContainer}
           className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl"
         >
@@ -223,7 +223,7 @@ export default function HomePage() {
         <motion.div 
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: false, amount: 0.2 }}
           variants={staggerContainer}
           className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl"
         >
@@ -260,7 +260,7 @@ export default function HomePage() {
         <motion.div 
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: false, amount: 0.2 }}
           variants={staggerContainer}
           className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl"
         >
@@ -294,7 +294,7 @@ export default function HomePage() {
         <motion.div 
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: false, amount: 0.2 }}
           variants={staggerContainer}
           className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl"
         >
@@ -353,7 +353,7 @@ export default function HomePage() {
         <motion.div 
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: false, amount: 0.2 }}
           variants={staggerContainer}
           className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl"
         >
@@ -402,7 +402,7 @@ export default function HomePage() {
         <motion.div 
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true }}
+          viewport={{ once: false }}
           variants={fadeUpVariants}
           className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center"
         >
