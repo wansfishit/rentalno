@@ -163,44 +163,44 @@ export default function AdminSettingsPage() {
 
         {/* Social Links */}
         <section>
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Link Media Sosial (Footer)</h2>
-          <p className="text-sm text-slate-500 mb-4">Biarkan kosong jika Anda tidak ingin menampilkannya di footer.</p>
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Media Sosial</h2>
+          <p className="text-sm text-slate-500 mb-4">Masukkan nomor WhatsApp dan username media sosial Anda (cukup nama akun saja, tanpa menuliskan alamat link website lengkap).</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">WhatsApp URL</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nomor WhatsApp</label>
               <input
                 type="text"
-                placeholder="https://wa.me/62..."
+                placeholder="Contoh: 6281378821654"
                 value={formData.social_whatsapp || ''}
                 onChange={(e) => setFormData({ ...formData, social_whatsapp: e.target.value })}
                 className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Instagram URL</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Username Instagram</label>
               <input
                 type="text"
-                placeholder="https://instagram.com/..."
+                placeholder="Contoh: rentalno.id"
                 value={formData.social_instagram || ''}
                 onChange={(e) => setFormData({ ...formData, social_instagram: e.target.value })}
                 className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Facebook URL</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Username Facebook</label>
               <input
                 type="text"
-                placeholder="https://facebook.com/..."
+                placeholder="Contoh: rentalno"
                 value={formData.social_facebook || ''}
                 onChange={(e) => setFormData({ ...formData, social_facebook: e.target.value })}
                 className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">TikTok URL</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Username TikTok</label>
               <input
                 type="text"
-                placeholder="https://tiktok.com/@..."
+                placeholder="Contoh: rentalno (atau @rentalno)"
                 value={formData.social_tiktok || ''}
                 onChange={(e) => setFormData({ ...formData, social_tiktok: e.target.value })}
                 className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"

@@ -203,7 +203,7 @@ function CatalogContent() {
 
       {/* Grid */}
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
           {[...Array(9)].map((_, i) => <CarCardSkeleton key={i} />)}
         </div>
       ) : cars.length === 0 ? (
@@ -219,7 +219,7 @@ function CatalogContent() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
           {cars.map((car) => <CarCard key={car.id} car={car} />)}
         </div>
       )}
@@ -280,7 +280,7 @@ export default function CarsPage() {
   return (
     <Suspense fallback={
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mt-8">
           {[...Array(9)].map((_, i) => <CarCardSkeleton key={i} />)}
         </div>
       </div>

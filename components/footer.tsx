@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Instagram, Phone, MapPin, Mail, Facebook } from 'lucide-react';
 import Logo from '@/components/logo';
 import { useSiteSettings } from '@/hooks/use-site-settings';
+import { formatSocialLink } from '@/lib/utils';
 
 export default function Footer() {
   const { settings } = useSiteSettings();
@@ -19,7 +20,7 @@ export default function Footer() {
   return (
     <footer className="bg-slate-50 dark:bg-black border-t border-slate-200 dark:border-white/5 text-slate-600 dark:text-zinc-400 transition-colors duration-300">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-12 lg:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10 lg:gap-8">
           
           {/* Brand */}
           <div className="space-y-6">
@@ -32,7 +33,7 @@ export default function Footer() {
             <div className="flex items-center gap-3">
               {waLink && (
                 <a
-                  href={waLink}
+                  href={formatSocialLink(waLink, 'whatsapp')}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 bg-white dark:bg-white/5 hover:bg-primary dark:hover:bg-primary rounded-full flex items-center justify-center transition-all duration-300 group border border-slate-200 dark:border-white/10 hover:border-primary dark:hover:border-primary"
@@ -43,7 +44,7 @@ export default function Footer() {
               )}
               {igLink && (
                 <a
-                  href={igLink}
+                  href={formatSocialLink(igLink, 'instagram')}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 bg-white dark:bg-white/5 hover:bg-primary dark:hover:bg-primary rounded-full flex items-center justify-center transition-all duration-300 group border border-slate-200 dark:border-white/10 hover:border-primary dark:hover:border-primary"
@@ -54,7 +55,7 @@ export default function Footer() {
               )}
               {fbLink && (
                 <a
-                  href={fbLink}
+                  href={formatSocialLink(fbLink, 'facebook')}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 bg-white dark:bg-white/5 hover:bg-primary dark:hover:bg-primary rounded-full flex items-center justify-center transition-all duration-300 group border border-slate-200 dark:border-white/10 hover:border-primary dark:hover:border-primary"
@@ -65,7 +66,7 @@ export default function Footer() {
               )}
               {tiktokLink && (
                 <a
-                  href={tiktokLink}
+                  href={formatSocialLink(tiktokLink, 'tiktok')}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 bg-white dark:bg-white/5 hover:bg-primary dark:hover:bg-primary rounded-full flex items-center justify-center transition-all duration-300 group border border-slate-200 dark:border-white/10 hover:border-primary dark:hover:border-primary"
@@ -120,33 +121,33 @@ export default function Footer() {
           {/* Contact */}
           <div>
             <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-4">Kontak</h4>
-            <ul className="space-y-3 text-sm">
+            <ul className="space-y-3 text-sm min-w-0">
               {phone && (
-                <li className="flex items-start gap-3">
+                <li className="flex items-start gap-3 min-w-0">
                   <Phone className="w-4 h-4 text-slate-400 dark:text-zinc-500 mt-0.5 shrink-0" />
-                  <a href={`https://wa.me/${phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="hover:text-primary dark:hover:text-white transition-colors">
+                  <a href={`https://wa.me/${phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="hover:text-primary dark:hover:text-white transition-colors break-all min-w-0">
                     {phone}
                   </a>
                 </li>
               )}
               {igLink && (
-                <li className="flex items-start gap-3">
+                <li className="flex items-start gap-3 min-w-0">
                   <Instagram className="w-4 h-4 text-slate-400 dark:text-zinc-500 mt-0.5 shrink-0" />
-                  <a href={igLink} target="_blank" rel="noopener noreferrer" className="hover:text-primary dark:hover:text-white transition-colors">
-                    {igLink.split('/').pop() || 'Instagram'}
+                  <a href={formatSocialLink(igLink, 'instagram')} target="_blank" rel="noopener noreferrer" className="hover:text-primary dark:hover:text-white transition-colors break-all min-w-0">
+                    {igLink}
                   </a>
                 </li>
               )}
               {location && (
-                <li className="flex items-start gap-3">
+                <li className="flex items-start gap-3 min-w-0">
                   <MapPin className="w-4 h-4 text-slate-400 dark:text-zinc-500 mt-0.5 shrink-0" />
-                  <span>{location}</span>
+                  <span className="break-words min-w-0">{location}</span>
                 </li>
               )}
               {email && (
-                <li className="flex items-start gap-3">
+                <li className="flex items-start gap-3 min-w-0">
                   <Mail className="w-4 h-4 text-slate-400 dark:text-zinc-500 mt-0.5 shrink-0" />
-                  <a href={`mailto:${email}`} className="hover:text-primary dark:hover:text-white transition-colors">
+                  <a href={`mailto:${email}`} className="hover:text-primary dark:hover:text-white transition-colors break-all min-w-0">
                     {email}
                   </a>
                 </li>

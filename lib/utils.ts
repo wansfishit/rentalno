@@ -60,3 +60,28 @@ export function getStatusLabel(status: string): string {
 export function slugify(text: string): string {
   return text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
 }
+
+export function formatSocialLink(value: string | null | undefined, platform: 'whatsapp' | 'instagram' | 'facebook' | 'tiktok'): string {
+  if (!value) return '';
+  const val = value.trim();
+  if (val.startsWith('http://') || val.startsWith('https://')) {
+    return val;
+  }
+  
+  switch (platform) {
+    case 'whatsapp': {
+      const cleanNum = val.replace(/[^0-9]/g, '');
+      return `https://wa.me/${cleanNum}`;
+    }
+    case 'instagram':
+      return `https://instagram.com/${val}`;
+    case 'facebook':
+      return `https://facebook.com/${val}`;
+    case 'tiktok': {
+      const cleanUsername = val.startsWith('@') ? val.slice(1) : val;
+      return `https://tiktok.com/@${cleanUsername}`;
+    }
+    default:
+      return val;
+  }
+}

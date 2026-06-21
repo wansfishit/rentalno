@@ -3,37 +3,40 @@
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Home, Car, Phone, User } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Home, Car, Globe, User, Phone, Instagram, Facebook } from 'lucide-react';
 import { useSiteSettings } from '@/hooks/use-site-settings';
-import { cn } from '@/lib/utils';
+import { cn, formatSocialLink } from '@/lib/utils';
 
-const DEFAULT_TABS = [
+const TABS = [
   { id: 'home', href: '/', icon: Home, label: 'Beranda' },
   { id: 'cars', href: '/cars', icon: Car, label: 'Armada' },
-  { id: 'contact', href: 'https://wa.me/6281378821654', icon: Phone, label: 'Kontak' },
+  { id: 'contact', href: '#contact', icon: Globe, label: 'Sosial' },
   { id: 'profile', href: '/profile', icon: User, label: 'Profil' },
 ];
 
 export default function LiquidTabBar() {
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState('home');
+  const [showSocials, setShowSocials] = useState(false);
   const { settings } = useSiteSettings();
   
-  const phone = settings?.contact_phone?.replace(/[^0-9]/g, '') || '6281378821654';
-  
-  const TABS = [
-    ...DEFAULT_TABS.slice(0, 2),
-    { id: 'contact', href: `https://wa.me/${phone}`, icon: Phone, label: 'Kontak' },
-    ...DEFAULT_TABS.slice(3)
-  ];
+  const phone = settings?.contact_phone || '6281378821654';
+  const waLink = settings?.social_whatsapp || phone;
+  const igLink = settings?.social_instagram || 'rentalno.id';
+  const fbLink = settings?.social_facebook || 'rentalno';
+  const tiktokLink = settings?.social_tiktok || 'rentalno';
 
   useEffect(() => {
-    if (pathname === '/cars') setActiveTab('cars');
-    else if (pathname.startsWith('/profile')) setActiveTab('profile');
-    else if (pathname === '/') setActiveTab('home');
-    else setActiveTab('');
-  }, [pathname]);
+    if (showSocials) {
+      setActiveTab('contact');
+    } else {
+      if (pathname === '/cars') setActiveTab('cars');
+      else if (pathname.startsWith('/profile')) setActiveTab('profile');
+      else if (pathname === '/') setActiveTab('home');
+      else setActiveTab('');
+    }
+  }, [pathname, showSocials]);
 
   return (
     <>
@@ -51,6 +54,90 @@ export default function LiquidTabBar() {
         </filter>
       </svg>
 
+      {/* Overlay Backdrop to close popup */}
+      <AnimatePresence>
+        {showSocials && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[98] bg-black/20 dark:bg-black/50 backdrop-blur-sm pointer-events-auto"
+            onClick={() => setShowSocials(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Social Media Popup Menu */}
+      <AnimatePresence>
+        {showSocials && (
+          <motion.div
+            initial={{ opacity: 0, y: 15, x: '-50%', scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, x: '-50%', scale: 1 }}
+            exit={{ opacity: 0, y: 15, x: '-50%', scale: 0.9 }}
+            transition={{ type: "spring", stiffness: 350, damping: 25 }}
+            className="fixed bottom-24 left-1/2 z-[99] pointer-events-auto flex items-center gap-3.5 px-4 py-3 bg-white/60 dark:bg-black/60 backdrop-blur-2xl rounded-2xl border border-white/20 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)]"
+          >
+            {/* WA */}
+            {waLink && (
+              <a
+                href={formatSocialLink(waLink, 'whatsapp')}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-11 h-11 rounded-full flex items-center justify-center bg-[#25D366] text-white hover:scale-110 active:scale-95 transition-transform shadow-[0_4px_12px_rgba(37,211,102,0.3)]"
+                title="WhatsApp"
+                onClick={() => setShowSocials(false)}
+              >
+                <Phone className="w-5 h-5 fill-white text-[#25D366]" />
+              </a>
+            )}
+            
+            {/* IG */}
+            {igLink && (
+              <a
+                href={formatSocialLink(igLink, 'instagram')}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-11 h-11 rounded-full flex items-center justify-center bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white hover:scale-110 active:scale-95 transition-transform shadow-[0_4px_12px_rgba(238,42,123,0.3)]"
+                title="Instagram"
+                onClick={() => setShowSocials(false)}
+              >
+                <Instagram className="w-5 h-5" />
+              </a>
+            )}
+            
+            {/* FB */}
+            {fbLink && (
+              <a
+                href={formatSocialLink(fbLink, 'facebook')}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-11 h-11 rounded-full flex items-center justify-center bg-[#1877F2] text-white hover:scale-110 active:scale-95 transition-transform shadow-[0_4px_12px_rgba(24,119,242,0.3)]"
+                title="Facebook"
+                onClick={() => setShowSocials(false)}
+              >
+                <Facebook className="w-5 h-5 fill-white text-[#1877F2]" />
+              </a>
+            )}
+
+            {/* TikTok */}
+            {tiktokLink && (
+              <a
+                href={formatSocialLink(tiktokLink, 'tiktok')}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-11 h-11 rounded-full flex items-center justify-center bg-black text-white hover:scale-110 active:scale-95 transition-transform shadow-[0_4px_12px_rgba(0,0,0,0.3)] border border-white/10"
+                title="TikTok"
+                onClick={() => setShowSocials(false)}
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                </svg>
+              </a>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="fixed bottom-6 left-0 right-0 z-[100] px-4 flex justify-center pointer-events-none">
         {/* Floating Container */}
         <div 
@@ -62,7 +149,6 @@ export default function LiquidTabBar() {
             "p-1.5"
           )}
           style={{
-            // Chromatic dispersion pseudo-glow via box-shadow
             boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.4), inset 0 -1px 1px rgba(0,0,0,0.1)',
           }}
         >
@@ -98,7 +184,6 @@ export default function LiquidTabBar() {
           <div className="relative z-10 flex items-center w-full">
             {TABS.map((tab) => {
               const isActive = activeTab === tab.id;
-              const isExternal = tab.href.startsWith('http');
               
               const Inner = (
                 <div className="flex flex-col items-center justify-center w-16 h-12 relative">
@@ -122,21 +207,24 @@ export default function LiquidTabBar() {
                 </div>
               );
 
-              return isExternal ? (
-                <a 
-                  key={tab.id} 
-                  href={tab.href} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="relative cursor-pointer"
-                >
-                  {Inner}
-                </a>
-              ) : (
+              if (tab.id === 'contact') {
+                return (
+                  <button 
+                    key={tab.id} 
+                    onClick={() => setShowSocials(!showSocials)}
+                    className="relative cursor-pointer focus:outline-none"
+                  >
+                    {Inner}
+                  </button>
+                );
+              }
+
+              return (
                 <Link 
                   key={tab.id} 
                   href={tab.href}
                   className="relative cursor-pointer"
+                  onClick={() => setShowSocials(false)}
                 >
                   {Inner}
                 </Link>

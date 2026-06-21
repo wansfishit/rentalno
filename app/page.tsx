@@ -241,27 +241,27 @@ export default function HomePage() {
       </section>
 
       {/* TRUST BADGES */}
-      <section className="bg-white dark:bg-[#0A0A0A] py-16 border-b border-slate-200 dark:border-white/5 overflow-hidden transition-colors duration-300">
+      <section className="bg-white dark:bg-[#0A0A0A] py-8 sm:py-16 border-b border-slate-200 dark:border-white/5 overflow-hidden transition-colors duration-300">
         <motion.div 
           initial="hidden"
           whileInView="visible"
           viewport={{ once: false, amount: 0.1 }}
           variants={staggerContainer}
-          className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl"
+          className="container mx-auto px-2 sm:px-6 lg:px-8 max-w-7xl"
         >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-4 gap-2 sm:gap-6">
             {[
               { icon: Shield, title: 'Proteksi Penuh', desc: 'Asuransi komprehensif' },
               { icon: Clock, title: 'Layanan VIP', desc: 'Bantuan 24/7 di mana saja' },
               { icon: Check, title: 'Kondisi Prima', desc: 'Standar perawatan tertinggi' },
               { icon: Car, title: 'Koleksi Eksklusif', desc: 'Hanya kendaraan terbaik' },
             ].map((item) => (
-              <motion.div key={item.title} variants={fadeUpVariants} className="flex flex-col items-center text-center p-6 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors border border-transparent hover:border-slate-100 dark:hover:border-white/5">
-                <div className="w-16 h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center mb-6 shadow-lg dark:shadow-[0_0_20px_rgba(214,175,54,0.3)]">
-                  <item.icon className="w-8 h-8" />
+              <motion.div key={item.title} variants={fadeUpVariants} className="flex flex-col items-center text-center p-2 sm:p-6 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors border border-transparent hover:border-slate-100 dark:hover:border-white/5">
+                <div className="w-10 h-10 sm:w-16 sm:h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center mb-3 sm:mb-6 shadow-lg dark:shadow-[0_0_20px_rgba(214,175,54,0.3)]">
+                  <item.icon className="w-5 h-5 sm:w-8 sm:h-8" />
                 </div>
-                <h3 className="font-bold text-slate-900 dark:text-white mb-2 tracking-wide">{item.title}</h3>
-                <p className="text-sm text-slate-600 dark:text-zinc-400 font-medium">{item.desc}</p>
+                <h3 className="font-bold text-[10px] sm:text-base text-slate-900 dark:text-white mb-1 sm:mb-2 tracking-wide leading-tight">{item.title}</h3>
+                <p className="text-[9px] sm:text-sm text-slate-600 dark:text-zinc-400 font-medium leading-normal">{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -269,7 +269,7 @@ export default function HomePage() {
       </section>
 
       {/* POPULAR CARS */}
-      <section className="py-24 bg-slate-50 dark:bg-black overflow-hidden relative transition-colors duration-300">
+      <section className="py-8 sm:py-24 bg-slate-50 dark:bg-black overflow-hidden relative transition-colors duration-300">
         {/* Subtle background glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[500px] bg-primary/10 dark:bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
         
@@ -279,24 +279,13 @@ export default function HomePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.1 }}
             transition={{ duration: 0.5 }}
-            className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12"
+            className="mb-6 sm:mb-12"
           >
-            <div>
-              <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white tracking-tight">Koleksi Terbatas</h2>
-              <p className="text-slate-600 dark:text-zinc-400 mt-4 text-lg font-light">Pilihan armada eksklusif yang paling sering disewa oleh klien VIP kami.</p>
-            </div>
-            <Link href="/cars" passHref legacyBehavior>
-              <motion.a 
-                whileHover={{ x: 5 }}
-                className="inline-flex items-center gap-2 text-sm font-bold text-primary hover:text-primary/80 dark:hover:text-white transition-colors uppercase tracking-widest"
-              >
-                Katalog Lengkap
-                <ArrowRight className="w-4 h-4" />
-              </motion.a>
-            </Link>
+            <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white tracking-tight">Koleksi Terbatas</h2>
+            <p className="text-slate-600 dark:text-zinc-400 mt-4 text-lg font-light">Pilihan armada eksklusif yang paling sering disewa oleh klien VIP kami.</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
             {loading
               ? [...Array(6)].map((_, i) => <CarCardSkeleton key={i} />)
               : cars.map((car, index) => (
@@ -310,6 +299,20 @@ export default function HomePage() {
                     <CarCard car={car} />
                   </motion.div>
                 ))}
+          </div>
+
+          <div className="flex justify-center mt-12">
+            <Link href="/cars" passHref legacyBehavior>
+              <motion.a 
+                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.05 }}
+                transition={springTransition}
+                className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-bold uppercase tracking-widest rounded-full hover:shadow-[0_0_30px_rgba(214,175,54,0.4)] transition-all duration-300"
+              >
+                Katalog Selengkapnya
+                <ArrowRight className="w-4 h-4" />
+              </motion.a>
+            </Link>
           </div>
         </div>
       </section>

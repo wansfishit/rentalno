@@ -49,10 +49,10 @@ export default function CarCard({ car }: CarCardProps) {
             </div>
           )}
           
-          <div className="absolute top-4 left-4 flex gap-2">
+          <div className="absolute top-2 left-2 sm:top-4 sm:left-4 flex gap-2">
             <Badge
               variant="secondary"
-              className={`px-4 py-1.5 text-xs font-bold uppercase tracking-wider backdrop-blur-xl border border-slate-200/50 dark:border-white/10 ${car.available
+              className={`px-2 py-0.5 sm:px-4 sm:py-1.5 text-[9px] sm:text-xs font-bold uppercase tracking-wider backdrop-blur-xl border border-slate-200/50 dark:border-white/10 ${car.available
                 ? 'bg-white/80 dark:bg-black/50 text-slate-900 dark:text-white'
                 : 'bg-red-50 dark:bg-red-900/80 text-red-600 dark:text-white'
               }`}
@@ -60,26 +60,26 @@ export default function CarCard({ car }: CarCardProps) {
               {car.available ? 'Tersedia' : 'Disewa'}
             </Badge>
           </div>
-          <div className="absolute top-4 right-4">
-            <Badge variant="secondary" className="px-4 py-1.5 text-xs font-bold uppercase tracking-wider bg-white/80 dark:bg-black/50 text-primary backdrop-blur-xl border border-slate-200/50 dark:border-white/10">
+          <div className="absolute top-2 right-2 sm:top-4 sm:right-4">
+            <Badge variant="secondary" className="px-2 py-0.5 sm:px-4 sm:py-1.5 text-[9px] sm:text-xs font-bold uppercase tracking-wider bg-white/80 dark:bg-black/50 text-primary backdrop-blur-xl border border-slate-200/50 dark:border-white/10">
               {car.category}
             </Badge>
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-5 sm:p-6">
+        <div className="p-3 sm:p-6">
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.1 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="mb-4"
+            className="mb-2 sm:mb-4"
           >
-            <h3 className="font-bold text-2xl text-slate-900 dark:text-white tracking-tight group-hover:text-primary dark:group-hover:text-primary transition-colors duration-300">
+            <h3 className="font-bold text-base sm:text-2xl text-slate-900 dark:text-white tracking-tight group-hover:text-primary dark:group-hover:text-primary transition-colors duration-300 line-clamp-1">
               {car.brand} {car.model}
             </h3>
-            <p className="text-sm text-slate-500 dark:text-zinc-400 font-medium mt-1">{car.year}</p>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 font-medium mt-0.5 sm:mt-1">{car.year}</p>
           </motion.div>
 
           {/* Specs */}
@@ -88,20 +88,20 @@ export default function CarCard({ car }: CarCardProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.1 }}
             transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
-            className="flex items-center gap-4 mb-8 text-sm text-slate-600 dark:text-zinc-400 font-medium"
+            className="flex flex-wrap items-center gap-x-2 gap-y-1 sm:gap-4 mb-4 sm:mb-8 text-xs sm:text-sm text-slate-600 dark:text-zinc-400 font-medium"
           >
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-primary" />
+            <div className="flex items-center gap-1 sm:gap-2">
+              <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
               <span>{car.seats}</span>
             </div>
-            <div className="w-1 h-1 rounded-full bg-slate-200 dark:bg-white/20" />
-            <div className="flex items-center gap-2">
-              <Settings className="w-4 h-4 text-primary" />
+            <div className="hidden sm:block w-1 h-1 rounded-full bg-slate-200 dark:bg-white/20" />
+            <div className="flex items-center gap-1 sm:gap-2">
+              <Settings className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
               <span>{car.transmission === 'Automatic' ? 'Auto' : 'Manual'}</span>
             </div>
-            <div className="w-1 h-1 rounded-full bg-slate-200 dark:bg-white/20" />
-            <div className="flex items-center gap-2">
-              <Fuel className="w-4 h-4 text-primary" />
+            <div className="hidden sm:block w-1 h-1 rounded-full bg-slate-200 dark:bg-white/20" />
+            <div className="flex items-center gap-1 sm:gap-2">
+              <Fuel className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
               <span>{car.fuel_type}</span>
             </div>
           </motion.div>
@@ -112,20 +112,20 @@ export default function CarCard({ car }: CarCardProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.1 }}
             transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
-            className="flex items-end justify-between pt-6 border-t border-slate-100 dark:border-white/5"
+            className="flex items-center justify-between pt-3 sm:pt-6 border-t border-slate-100 dark:border-white/5"
           >
-            <div>
-              <p className="text-[10px] sm:text-xs text-slate-400 dark:text-zinc-500 font-bold uppercase tracking-widest mb-1">Mulai Dari</p>
-              <div className="flex items-baseline gap-1">
-                <span className="font-bold text-2xl sm:text-3xl text-slate-900 dark:text-white tracking-tighter">
+            <div className="min-w-0">
+              <p className="text-[9px] sm:text-xs text-slate-400 dark:text-zinc-500 font-bold uppercase tracking-widest mb-0.5 sm:mb-1">Mulai Dari</p>
+              <div className="flex items-baseline gap-0.5 sm:gap-1 flex-wrap">
+                <span className="font-bold text-sm sm:text-2xl md:text-3xl text-slate-900 dark:text-white tracking-tighter truncate">
                   {formatCurrency(car.price_per_day)}
                 </span>
-                <span className="text-sm text-slate-500 dark:text-zinc-500 font-medium">/hari</span>
+                <span className="text-[10px] sm:text-sm text-slate-500 dark:text-zinc-500 font-medium">/hari</span>
               </div>
             </div>
             
-            <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-900 dark:text-white group-hover:bg-primary dark:group-hover:bg-primary group-hover:text-primary-foreground dark:group-hover:text-primary-foreground group-hover:shadow-[0_0_20px_rgba(214,175,54,0.3)] dark:group-hover:shadow-[0_0_20px_rgba(214,175,54,0.5)] transition-all duration-500 transform group-hover:rotate-[-45deg] group-hover:scale-110">
-              <ArrowRight className="w-5 h-5" />
+            <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-900 dark:text-white group-hover:bg-primary dark:group-hover:bg-primary group-hover:text-primary-foreground dark:group-hover:text-primary-foreground group-hover:shadow-[0_0_20px_rgba(214,175,54,0.3)] dark:group-hover:shadow-[0_0_20px_rgba(214,175,54,0.5)] transition-all duration-500 transform group-hover:rotate-[-45deg] group-hover:scale-110 shrink-0">
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </motion.div>
         </div>
