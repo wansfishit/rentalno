@@ -13,6 +13,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { supabase } from '@/lib/supabase';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import type { Car } from '@/types';
+import { useSiteSettings } from '@/hooks/use-site-settings';
 
 export default function CarDetailClient() {
   const [car, setCar] = useState<Car | null>(null);
@@ -28,7 +29,8 @@ export default function CarDetailClient() {
   const [isGettingLocation, setIsGettingLocation] = useState(false);
   const [discountRate, setDiscountRate] = useState(0);
   
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
+  const { settings } = useSiteSettings();
   const router = useRouter();
 
   const searchParams = useSearchParams();
@@ -145,7 +147,7 @@ export default function CarDetailClient() {
       toast.success('Booking berhasil! Mengalihkan ke WhatsApp...');
       
       // Build WhatsApp Message
-      const adminPhone = '6281378821654'; // User's WhatsApp number
+      const adminPhone = settings?.contact_phone?.replace(/[^0-9]/g, '') || '6281378821654';
       const customerName = isMember ? user?.user_metadata?.full_name : guestName;
       const waMessage = `Halo Rentalno, saya ingin menyewa mobil:
       

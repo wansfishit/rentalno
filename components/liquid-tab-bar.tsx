@@ -5,9 +5,10 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Home, Car, Phone, User } from 'lucide-react';
+import { useSiteSettings } from '@/hooks/use-site-settings';
 import { cn } from '@/lib/utils';
 
-const TABS = [
+const DEFAULT_TABS = [
   { id: 'home', href: '/', icon: Home, label: 'Beranda' },
   { id: 'cars', href: '/cars', icon: Car, label: 'Armada' },
   { id: 'contact', href: 'https://wa.me/6281378821654', icon: Phone, label: 'Kontak' },
@@ -17,6 +18,15 @@ const TABS = [
 export default function LiquidTabBar() {
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState('home');
+  const { settings } = useSiteSettings();
+  
+  const phone = settings?.contact_phone?.replace(/[^0-9]/g, '') || '6281378821654';
+  
+  const TABS = [
+    ...DEFAULT_TABS.slice(0, 2),
+    { id: 'contact', href: `https://wa.me/${phone}`, icon: Phone, label: 'Kontak' },
+    ...DEFAULT_TABS.slice(3)
+  ];
 
   useEffect(() => {
     if (pathname === '/cars') setActiveTab('cars');

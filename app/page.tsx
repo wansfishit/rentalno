@@ -97,8 +97,9 @@ export default function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const { settings } = useSiteSettings();
   
-  const heroTitle = settings?.hero_title || "Eksplorasi\nTanpa Batas.";
-  const heroSubtitle = settings?.hero_subtitle || "Armada eksklusif dengan pelayanan kelas satu. Pesan langsung dari mana saja, kapan saja.";
+  const heroTitle = settings?.hero_title || 'Sewa Mobil Premium,\nBebas Ribet';
+  const heroSubtitle = settings?.hero_subtitle || 'Pilihan armada terbaik dengan harga transparan dan asuransi penuh untuk perjalanan Anda yang tak terlupakan.';
+  const phone = settings?.contact_phone?.replace(/[^0-9]/g, '') || '6281378821654';
 
   useEffect(() => {
     getPopularCars(6)
@@ -379,7 +380,7 @@ export default function HomePage() {
               </motion.a>
             </Link>
             <motion.a
-              href="https://wa.me/6281378821654"
+              href={`https://wa.me/${phone}`}
               target="_blank"
               rel="noopener noreferrer"
               whileTap={{ scale: 0.95 }}
