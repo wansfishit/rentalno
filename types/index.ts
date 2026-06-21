@@ -14,6 +14,9 @@ export interface SiteSettings {
   social_instagram: string | null;
   social_tiktok: string | null;
   social_whatsapp: string | null;
+  contact_phone: string | null;
+  contact_email: string | null;
+  contact_location: string | null;
   updated_at: string;
 }
 

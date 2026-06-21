@@ -21,6 +21,9 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       social_instagram: null,
       social_tiktok: null,
       social_whatsapp: null,
+      contact_phone: '+62 813-7882-1654',
+      contact_email: 'hello@rentalno.com',
+      contact_location: 'Jakarta, Indonesia',
       updated_at: new Date().toISOString(),
     };
   }

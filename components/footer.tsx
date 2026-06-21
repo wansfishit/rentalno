@@ -9,9 +9,13 @@ export default function Footer() {
   const { settings } = useSiteSettings();
   
   const fbLink = settings?.social_facebook;
-  const igLink = settings?.social_instagram || 'https://instagram.com/R1STNO';
+  const igLink = settings?.social_instagram;
   const tiktokLink = settings?.social_tiktok;
-  const waLink = settings?.social_whatsapp || 'https://wa.me/6281378821654';
+  const waLink = settings?.social_whatsapp;
+
+  const phone = settings?.contact_phone || '+62 813-7882-1654';
+  const email = settings?.contact_email || 'hello@rentalno.com';
+  const location = settings?.contact_location || 'Jakarta, Indonesia';
   return (
     <footer className="bg-black border-t border-zinc-900 text-zinc-400">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-12 lg:py-16">
@@ -117,26 +121,36 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-semibold text-white mb-4">Kontak</h4>
             <ul className="space-y-3 text-sm">
-              <li className="flex items-start gap-3">
-                <Phone className="w-4 h-4 text-zinc-500 mt-0.5 shrink-0" />
-                <a href="https://wa.me/6281378821654" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
-                  +62 813-7882-1654
-                </a>
-              </li>
-              <li className="flex items-start gap-3">
-                <Instagram className="w-4 h-4 text-zinc-500 mt-0.5 shrink-0" />
-                <a href="https://instagram.com/R1STNO" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
-                  @R1STNO
-                </a>
-              </li>
-              <li className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-zinc-500 mt-0.5 shrink-0" />
-                <span>Jakarta, Indonesia</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <Mail className="w-4 h-4 text-zinc-500 mt-0.5 shrink-0" />
-                <span>hello@rentalno.id</span>
-              </li>
+              {phone && (
+                <li className="flex items-start gap-3">
+                  <Phone className="w-4 h-4 text-zinc-500 mt-0.5 shrink-0" />
+                  <a href={`https://wa.me/${phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                    {phone}
+                  </a>
+                </li>
+              )}
+              {igLink && (
+                <li className="flex items-start gap-3">
+                  <Instagram className="w-4 h-4 text-zinc-500 mt-0.5 shrink-0" />
+                  <a href={igLink} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                    {igLink.split('/').pop() || 'Instagram'}
+                  </a>
+                </li>
+              )}
+              {location && (
+                <li className="flex items-start gap-3">
+                  <MapPin className="w-4 h-4 text-zinc-500 mt-0.5 shrink-0" />
+                  <span>{location}</span>
+                </li>
+              )}
+              {email && (
+                <li className="flex items-start gap-3">
+                  <Mail className="w-4 h-4 text-zinc-500 mt-0.5 shrink-0" />
+                  <a href={`mailto:${email}`} className="hover:text-white transition-colors">
+                    {email}
+                  </a>
+                </li>
+              )}
             </ul>
           </div>
         </div>

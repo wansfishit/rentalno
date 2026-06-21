@@ -209,6 +209,48 @@ export default function AdminSettingsPage() {
           </div>
         </section>
 
+        <hr className="border-slate-100 dark:border-slate-800" />
+
+        {/* Contact Info */}
+        <section>
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Informasi Kontak</h2>
+          <p className="text-sm text-slate-500 mb-4">Ditampilkan di bagian Footer dan halaman Kontak.</p>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nomor Telepon</label>
+                <input
+                  type="text"
+                  placeholder="+62 813-..."
+                  value={formData.contact_phone || ''}
+                  onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
+                  className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Alamat Email</label>
+                <input
+                  type="email"
+                  placeholder="hello@..."
+                  value={formData.contact_email || ''}
+                  onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
+                  className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Alamat Lengkap (Lokasi)</label>
+              <textarea
+                value={formData.contact_location || ''}
+                onChange={(e) => setFormData({ ...formData, contact_location: e.target.value })}
+                rows={2}
+                placeholder="Jl. Sudirman No. 1..."
+                className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              />
+            </div>
+          </div>
+        </section>
+
         <div className="flex justify-end pt-6 border-t border-slate-100 dark:border-slate-800">
           <button
             onClick={handleSave}
