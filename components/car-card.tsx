@@ -13,7 +13,7 @@ interface CarCardProps {
 
 export default function CarCard({ car }: CarCardProps) {
   return (
-    <Link href={`/cars/${car.id}`} className="group block">
+    <Link href={`/cars/detail?id=${car.id}`} className="group block">
       <div className="bg-white dark:bg-zinc-950 rounded-[24px] border border-zinc-200/80 dark:border-zinc-800/80 overflow-hidden hover:shadow-2xl hover:shadow-black/5 hover:-translate-y-1 transition-all duration-300 group-hover:border-zinc-300 dark:group-hover:border-zinc-700">
         {/* Image */}
         <div className="relative aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-zinc-100 dark:bg-zinc-900">

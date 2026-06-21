@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import {
   Users, Fuel, Settings, Star, Check, ArrowLeft, Loader2, Calendar, MapPin
@@ -13,7 +13,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import type { Car } from '@/types';
 
-export default function CarDetailPage({ params }: { params: { id: string } }) {
+export default function CarDetailClient() {
   const [car, setCar] = useState<Car | null>(null);
   const [loading, setLoading] = useState(true);
   const [bookingLoading, setBookingLoading] = useState(false);
@@ -31,12 +31,16 @@ export default function CarDetailPage({ params }: { params: { id: string } }) {
   const { user } = useAuth();
   const router = useRouter();
 
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id');
+
   useEffect(() => {
-    getCarById(params.id)
+    if (!id) return;
+    getCarById(id)
       .then(setCar)
       .catch(() => toast.error('Mobil tidak ditemukan'))
       .finally(() => setLoading(false));
-  }, [params.id]);
+  }, [id]);
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -112,7 +116,7 @@ export default function CarDetailPage({ params }: { params: { id: string } }) {
     setBookingLoading(true);
     try {
       await createBooking({
-        car_id: params.id,
+        car_id: id as string,
         user_id: user?.id,
         start_date: startDate,
         end_date: endDate,
