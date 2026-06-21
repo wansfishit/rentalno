@@ -44,7 +44,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <div className="pb-24 md:pb-0 min-h-screen flex flex-col">
+            <div className="pb-24 min-h-screen flex flex-col">
               {children}
             </div>
             <LiquidTabBar />

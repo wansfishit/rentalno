@@ -41,7 +41,7 @@ export default function LiquidTabBar() {
         </filter>
       </svg>
 
-      <div className="md:hidden fixed bottom-6 left-0 right-0 z-[100] px-4 flex justify-center pointer-events-none">
+      <div className="fixed bottom-6 left-0 right-0 z-[100] px-4 flex justify-center pointer-events-none">
         {/* Floating Container */}
         <div 
           className={cn(
