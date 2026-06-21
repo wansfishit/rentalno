@@ -196,7 +196,7 @@ export default function HomePage() {
         <motion.div 
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true, margin: '-50px' }}
           variants={staggerContainer}
           className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl"
         >
@@ -224,7 +224,7 @@ export default function HomePage() {
         <motion.div 
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true, margin: '-50px' }}
           variants={staggerContainer}
           className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl"
         >
@@ -261,7 +261,7 @@ export default function HomePage() {
         <motion.div 
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true, margin: '-50px' }}
           variants={staggerContainer}
           className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl"
         >
@@ -298,7 +298,7 @@ export default function HomePage() {
         <motion.div 
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, amount: 0.2 }}
+          viewport={{ once: true, margin: '-50px' }}
           variants={staggerContainer}
           className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl"
         >

@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { Users, Fuel, Settings, ArrowRight } from 'lucide-react';
 import type { Car } from '@/types';
 import { formatCurrency } from '@/lib/utils';
@@ -46,15 +49,27 @@ export default function CarCard({ car }: CarCardProps) {
 
         {/* Content */}
         <div className="p-5 sm:p-6">
-          <div className="mb-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="mb-4"
+          >
             <h3 className="font-bold text-xl text-zinc-900 dark:text-white tracking-tight group-hover:text-zinc-600 transition-colors">
               {car.brand} {car.model}
             </h3>
             <p className="text-sm text-zinc-500 font-medium mt-1">{car.year}</p>
-          </div>
+          </motion.div>
 
           {/* Specs */}
-          <div className="flex items-center gap-4 mb-6 text-sm text-zinc-600 dark:text-zinc-400">
+          <motion.div 
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
+            className="flex items-center gap-4 mb-6 text-sm text-zinc-600 dark:text-zinc-400"
+          >
             <div className="flex items-center gap-1.5">
               <Users className="w-4 h-4 text-zinc-400" />
               <span>{car.seats}</span>
@@ -69,10 +84,16 @@ export default function CarCard({ car }: CarCardProps) {
               <Fuel className="w-4 h-4 text-zinc-400" />
               <span>{car.fuel_type}</span>
             </div>
-          </div>
+          </motion.div>
 
           {/* Price */}
-          <div className="flex items-end justify-between pt-5 border-t border-zinc-100 dark:border-zinc-800/80">
+          <motion.div 
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
+            className="flex items-end justify-between pt-5 border-t border-zinc-100 dark:border-zinc-800/80"
+          >
             <div>
               <p className="text-[10px] sm:text-xs text-zinc-400 font-semibold uppercase tracking-widest mb-1">Mulai Dari</p>
               <div className="flex items-baseline gap-1">
@@ -86,7 +107,7 @@ export default function CarCard({ car }: CarCardProps) {
             <div className="w-11 h-11 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-600 dark:text-zinc-400 group-hover:bg-black group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-black transition-all duration-300 transform group-hover:rotate-[-45deg]">
               <ArrowRight className="w-5 h-5" />
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </Link>
