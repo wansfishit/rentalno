@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Star, MessageSquare } from 'lucide-react';
-import { motion, Variants } from 'framer-motion';
+import { motion, Variants, Transition } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/use-auth';
@@ -17,7 +17,7 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 
-const gentleSpringTransition = {
+const gentleSpringTransition: Transition = {
   type: "spring",
   stiffness: 80,
   damping: 20,
