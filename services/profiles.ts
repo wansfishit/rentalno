@@ -14,11 +14,11 @@ export async function getProfile(userId: string): Promise<Profile | null> {
 
 export async function updateProfile(
   userId: string,
-  updates: Partial<Pick<Profile, 'full_name' | 'phone' | 'avatar_url'>>
+  updates: Partial<Pick<Profile, 'username'>>
 ): Promise<Profile> {
   const { data, error } = await supabase
     .from('profiles')
-    .upsert({ id: userId, ...updates, updated_at: new Date().toISOString() }, { onConflict: 'id' })
+    .upsert({ id: userId, ...updates }, { onConflict: 'id' })
     .select()
     .single();
 

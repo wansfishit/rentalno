@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Users, Car, ListOrdered, DollarSign, TrendingUp, Clock, CheckCircle, XCircle } from 'lucide-react';
-import { getAdminStats } from '@/services/bookings';
+import { getAdminStats, getAdminRecentActivities, RecentActivityItem } from '@/services/bookings';
 import { formatCurrency } from '@/lib/utils';
 import { StatCardSkeleton } from '@/components/skeletons';
 
@@ -13,22 +13,38 @@ interface Stats {
   totalRevenue: number;
 }
 
-const RECENT_ACTIVITY = [
-  { action: 'Booking baru dari Budi S.', time: '2 menit lalu', type: 'booking' },
-  { action: 'BMW 320i dikonfirmasi', time: '15 menit lalu', type: 'confirm' },
-  { action: 'Booking Fortuner selesai', time: '1 jam lalu', type: 'complete' },
-  { action: 'User baru: sari@email.com', time: '2 jam lalu', type: 'user' },
-  { action: 'Booking Xpander dibatalkan', time: '3 jam lalu', type: 'cancel' },
-];
+function formatRelativeTime(dateString: string): string {
+  const now = new Date();
+  const date = new Date(dateString);
+  const diffMs = now.getTime() - date.getTime();
+  const diffSec = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHr = Math.floor(diffMin / 60);
+  const diffDay = Math.floor(diffHr / 24);
+
+  if (diffSec < 60) {
+    return 'Baru saja';
+  } else if (diffMin < 60) {
+    return `${diffMin} menit lalu`;
+  } else if (diffHr < 24) {
+    return `${diffHr} jam lalu`;
+  } else if (diffDay < 30) {
+    return `${diffDay} hari lalu`;
+  } else {
+    return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+  }
+}
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState<Stats | null>(null);
+  const [activities, setActivities] = useState<RecentActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getAdminStats()
-      .then(setStats)
-      .finally(() => setLoading(false));
+    Promise.all([
+      getAdminStats().then(setStats),
+      getAdminRecentActivities().then(setActivities)
+    ]).finally(() => setLoading(false));
   }, []);
 
   const STAT_CARDS = stats
@@ -132,25 +148,29 @@ export default function AdminDashboardPage() {
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
           <h2 className="font-semibold text-slate-900 dark:text-white mb-5">Aktivitas Terkini</h2>
           <div className="space-y-3">
-            {RECENT_ACTIVITY.map((activity, i) => {
-              const Icon = activity.type === 'booking' ? Clock
-                : activity.type === 'confirm' ? CheckCircle
-                : activity.type === 'cancel' ? XCircle
-                : activity.type === 'user' ? Users
-                : CheckCircle;
+            {activities.length === 0 ? (
+              <p className="text-sm text-slate-500 dark:text-slate-400">Belum ada aktivitas terbaru.</p>
+            ) : (
+              activities.map((activity, i) => {
+                const Icon = activity.type === 'booking' ? Clock
+                  : activity.type === 'confirm' ? CheckCircle
+                  : activity.type === 'cancel' ? XCircle
+                  : activity.type === 'user' ? Users
+                  : CheckCircle;
 
-              const iconColor = activity.type === 'cancel' ? 'text-red-500' : activity.type === 'complete' ? 'text-emerald-500' : 'text-blue-500';
+                const iconColor = activity.type === 'cancel' ? 'text-red-500' : activity.type === 'complete' ? 'text-emerald-500' : 'text-blue-500';
 
-              return (
-                <div key={i} className="flex items-center gap-3">
-                  <Icon className={`w-4 h-4 ${iconColor} shrink-0`} />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-slate-700 dark:text-slate-300 truncate">{activity.action}</p>
+                return (
+                  <div key={i} className="flex items-center gap-3">
+                    <Icon className={`w-4 h-4 ${iconColor} shrink-0`} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-slate-700 dark:text-slate-300 truncate">{activity.action}</p>
+                    </div>
+                    <span className="text-xs text-slate-400 shrink-0">{formatRelativeTime(activity.created_at)}</span>
                   </div>
-                  <span className="text-xs text-slate-400 shrink-0">{activity.time}</span>
-                </div>
-              );
-            })}
+                );
+              })
+            )}
           </div>
         </div>
       </div>

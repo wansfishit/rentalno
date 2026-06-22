@@ -95,7 +95,7 @@ export default function AdminBookingsPage() {
               <div className="flex justify-between items-start">
                 <div>
                   <p className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    {booking.guest_name || (booking as any).profile?.username || 'Guest'}
+                    {booking.guest_name || booking.profile?.username || 'Guest'}
                     {!booking.user_id && (
                       <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 font-medium">
                         GUEST
@@ -193,7 +193,7 @@ export default function AdminBookingsPage() {
                       <div>
                         <div className="flex items-center gap-2">
                           <p className="text-sm font-medium text-slate-900 dark:text-white">
-                            {booking.guest_name || (booking as any).profile?.username || 'Guest'}
+                            {booking.guest_name || booking.profile?.username || 'Guest'}
                           </p>
                           {!booking.user_id && (
                             <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 font-medium">

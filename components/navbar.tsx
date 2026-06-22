@@ -3,12 +3,13 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Menu, X, User, LogOut, Settings, ChevronDown, Sun, Moon } from 'lucide-react';
+import { Menu, X, User, LogOut, Settings, ChevronDown } from 'lucide-react';
 import Logo from '@/components/logo';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { useLanguage } from '@/hooks/use-language';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -17,6 +18,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, profile, isAdmin, signOut } = useAuth();
+  const { locale, setLocale, t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -31,14 +33,14 @@ export default function Navbar() {
 
   const handleSignOut = async () => {
     await signOut();
-    toast.success('Berhasil keluar');
+    toast.success(locale === 'id' ? 'Berhasil keluar' : 'Logged out successfully');
     router.push('/');
   };
 
   const navLinks = [
-    { href: '/cars', label: 'Armada' },
-    { href: '/#how-it-works', label: 'Cara Kerja' },
-    { href: '/#faq', label: 'FAQ' },
+    { href: '/cars', label: t('navbar.cars') },
+    { href: '/#how-it-works', label: t('navbar.how_it_works') },
+    { href: '/#faq', label: t('navbar.faq') },
   ];
 
   const isHome = pathname === '/';
@@ -88,6 +90,19 @@ export default function Navbar() {
           <div className="flex items-center gap-4">
             <ThemeToggle isTransparentContext={!scrolled && isHome} />
 
+            <button
+              onClick={() => setLocale(locale === 'id' ? 'en' : 'id')}
+              className={cn(
+                "relative w-10 h-10 rounded-full flex items-center justify-center transition-colors border text-xs font-bold tracking-wider",
+                !scrolled && isHome
+                  ? "bg-white/10 hover:bg-white/20 border-white/20 dark:bg-white/10 dark:hover:bg-white/20 text-white"
+                  : "bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 border-transparent dark:border-white/10 text-slate-800 dark:text-zinc-200"
+              )}
+              aria-label="Toggle language"
+            >
+              {locale.toUpperCase()}
+            </button>
+
             {user ? (
               <div className="relative hidden md:block">
                 <button
@@ -100,9 +115,9 @@ export default function Navbar() {
                   )}
                 >
                   <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold shadow-[0_0_15px_rgba(214,175,54,0.3)]">
-                    {(profile?.full_name || user.email || 'U')[0].toUpperCase()}
+                    {(profile?.username || user.email || 'U')[0].toUpperCase()}
                   </div>
-                  <span className="max-w-[120px] truncate tracking-wide">{profile?.full_name || user.email?.split('@')[0]}</span>
+                  <span className="max-w-[120px] truncate tracking-wide">{profile?.username || user.email?.split('@')[0]}</span>
                   <ChevronDown className="w-3 h-3 opacity-50" />
                 </button>
 
@@ -111,12 +126,12 @@ export default function Navbar() {
                     {isAdmin && (
                       <Link href="/admin" className="flex items-center gap-3 px-5 py-2.5 text-sm text-slate-700 dark:text-zinc-300 hover:text-primary dark:hover:text-primary hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
                         <Settings className="w-4 h-4" />
-                        Admin Dashboard
+                        {t('navbar.admin')}
                       </Link>
                     )}
                     <Link href="/profile" className="flex items-center gap-3 px-5 py-2.5 text-sm text-slate-700 dark:text-zinc-300 hover:text-primary dark:hover:text-primary hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
                       <User className="w-4 h-4" />
-                      Profil Saya
+                      {t('navbar.profile')}
                     </Link>
                     <div className="border-t border-slate-100 dark:border-white/10 my-2" />
                     <button
@@ -124,7 +139,7 @@ export default function Navbar() {
                       className="w-full flex items-center gap-3 px-5 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
                     >
                       <LogOut className="w-4 h-4" />
-                      Keluar
+                      {t('navbar.logout')}
                     </button>
                   </div>
                 )}
@@ -140,13 +155,13 @@ export default function Navbar() {
                       : 'text-white/90 hover:text-primary'
                   )}
                 >
-                  Masuk
+                  {t('navbar.login')}
                 </Link>
                 <Link
                   href="/register"
                   className="px-6 py-2.5 text-sm font-bold bg-primary text-primary-foreground rounded-full hover:shadow-[0_0_20px_rgba(214,175,54,0.4)] transition-all uppercase tracking-wide"
                 >
-                  Daftar
+                  {t('navbar.register')}
                 </Link>
               </div>
             )}
@@ -186,28 +201,28 @@ export default function Navbar() {
                   {isAdmin && (
                     <Link href="/admin" className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-primary uppercase tracking-wide">
                       <Settings className="w-4 h-4" />
-                      Admin Dashboard
+                      {t('navbar.admin')}
                     </Link>
                   )}
                   <Link href="/profile" className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-primary uppercase tracking-wide">
                     <User className="w-4 h-4" />
-                    Profil Saya
+                    {t('navbar.profile')}
                   </Link>
                   <button
                     onClick={handleSignOut}
                     className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-400 hover:bg-red-500/10 uppercase tracking-wide"
                   >
                     <LogOut className="w-4 h-4" />
-                    Keluar
+                    {t('navbar.logout')}
                   </button>
                 </>
               ) : (
                 <div className="flex flex-col gap-3 pt-2">
                   <Link href="/login" className="block px-4 py-3 rounded-full border border-slate-200 dark:border-white/20 text-sm font-bold text-center text-slate-800 dark:text-white hover:bg-slate-50 dark:hover:bg-white/5 uppercase tracking-wide">
-                    Masuk
+                    {t('navbar.login')}
                   </Link>
                   <Link href="/register" className="block px-4 py-3 rounded-full text-sm font-bold bg-primary text-primary-foreground text-center shadow-[0_0_15px_rgba(214,175,54,0.3)] uppercase tracking-wide">
-                    Daftar
+                    {t('navbar.register')}
                   </Link>
                 </div>
               )}

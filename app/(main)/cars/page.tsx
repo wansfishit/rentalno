@@ -7,19 +7,12 @@ import CarCard from '@/components/car-card';
 import { CarCardSkeleton } from '@/components/skeletons';
 import { getCars } from '@/services/cars';
 import type { Car, CarFilters, PaginationMeta, CarCategory, Transmission } from '@/types';
-
-const CATEGORIES: { value: CarCategory | 'all'; label: string }[] = [
-  { value: 'all', label: 'Semua' },
-  { value: 'MPV', label: 'MPV' },
-  { value: 'SUV', label: 'SUV' },
-  { value: 'Sedan', label: 'Sedan' },
-  { value: 'Hatchback', label: 'Hatchback' },
-  { value: 'Luxury', label: 'Luxury' },
-];
+import { useLanguage } from '@/hooks/use-language';
 
 function CatalogContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { locale } = useLanguage();
 
   const [cars, setCars] = useState<Car[]>([]);
   const [meta, setMeta] = useState<PaginationMeta>({ page: 1, pageSize: 9, total: 0, totalPages: 0 });
@@ -31,6 +24,15 @@ function CatalogContent() {
   const [transmission, setTransmission] = useState<Transmission | 'all'>((searchParams.get('transmission') as Transmission) || 'all');
   const [maxPrice, setMaxPrice] = useState<number>(2000000);
   const page = parseInt(searchParams.get('page') || '1', 10);
+
+  const categories = [
+    { value: 'all' as const, label: locale === 'id' ? 'Semua' : 'All' },
+    { value: 'MPV' as const, label: 'MPV' },
+    { value: 'SUV' as const, label: 'SUV' },
+    { value: 'Sedan' as const, label: 'Sedan' },
+    { value: 'Hatchback' as const, label: 'Hatchback' },
+    { value: 'Luxury' as const, label: locale === 'id' ? 'Mewah' : 'Luxury' },
+  ];
 
   const fetchCars = useCallback(async () => {
     setLoading(true);
@@ -92,9 +94,13 @@ function CatalogContent() {
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-1">Katalog Mobil</h1>
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-1">
+          {locale === 'id' ? 'Katalog Mobil' : 'Car Catalog'}
+        </h1>
         <p className="text-slate-500 dark:text-slate-400">
-          {meta.total > 0 ? `${meta.total} armada tersedia` : 'Temukan mobil yang sempurna'}
+          {meta.total > 0 
+            ? (locale === 'id' ? `${meta.total} armada tersedia` : `${meta.total} vehicles available`) 
+            : (locale === 'id' ? 'Temukan mobil yang sempurna' : 'Find the perfect car')}
         </p>
       </div>
 
@@ -104,7 +110,7 @@ function CatalogContent() {
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
-            placeholder="Cari merek atau model..."
+            placeholder={locale === 'id' ? 'Cari merek atau model...' : 'Search brand or model...'}
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
@@ -119,7 +125,7 @@ function CatalogContent() {
           }`}
         >
           <SlidersHorizontal className="w-4 h-4" />
-          Filter
+          {locale === 'id' ? 'Filter' : 'Filters'}
           {hasActiveFilters && (
             <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
           )}
@@ -136,7 +142,7 @@ function CatalogContent() {
 
       {/* Category Pills */}
       <div className="flex gap-2 mb-6 overflow-x-auto scrollbar-hide pb-1">
-        {CATEGORIES.map((cat) => (
+        {categories.map((cat) => (
           <button
             key={cat.value}
             onClick={() => handleCategoryChange(cat.value)}
@@ -157,7 +163,7 @@ function CatalogContent() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                Transmisi
+                {locale === 'id' ? 'Transmisi' : 'Transmission'}
               </label>
               <div className="flex gap-2">
                 {(['all', 'Automatic', 'Manual'] as const).map((t) => (
@@ -173,7 +179,9 @@ function CatalogContent() {
                         : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
                     }`}
                   >
-                    {t === 'all' ? 'Semua' : t}
+                    {t === 'all' 
+                      ? (locale === 'id' ? 'Semua' : 'All') 
+                      : (t === 'Automatic' && locale === 'en' ? 'Automatic' : t === 'Automatic' && locale === 'id' ? 'Otomatis' : t)}
                   </button>
                 ))}
               </div>
@@ -181,7 +189,12 @@ function CatalogContent() {
 
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                Harga Maks: <span className="text-blue-600">Rp {(maxPrice / 1000).toFixed(0)}rb/hari</span>
+                {locale === 'id' ? 'Harga Maks' : 'Max Price'}:{' '}
+                <span className="text-blue-600">
+                  {locale === 'id' 
+                    ? `Rp ${(maxPrice / 1000).toFixed(0)}rb/hari` 
+                    : `IDR ${(maxPrice / 1000).toFixed(0)}k/day`}
+                </span>
               </label>
               <input
                 type="range"
@@ -193,8 +206,8 @@ function CatalogContent() {
                 className="w-full accent-blue-600"
               />
               <div className="flex justify-between text-xs text-slate-400 mt-1">
-                <span>Rp 200rb</span>
-                <span>Rp 2jt</span>
+                <span>{locale === 'id' ? 'Rp 200rb' : 'IDR 200k'}</span>
+                <span>{locale === 'id' ? 'Rp 2jt' : 'IDR 2m'}</span>
               </div>
             </div>
           </div>
@@ -209,13 +222,17 @@ function CatalogContent() {
       ) : cars.length === 0 ? (
         <div className="text-center py-20">
           <div className="text-6xl mb-4">🚗</div>
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">Tidak ada mobil ditemukan</h3>
-          <p className="text-slate-500 dark:text-slate-400 mb-6">Coba ubah filter pencarian Anda</p>
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+            {locale === 'id' ? 'Tidak ada mobil ditemukan' : 'No cars found'}
+          </h3>
+          <p className="text-slate-500 dark:text-slate-400 mb-6">
+            {locale === 'id' ? 'Coba ubah filter pencarian Anda' : 'Try changing your search filters'}
+          </p>
           <button
             onClick={clearFilters}
             className="px-5 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors"
           >
-            Reset Filter
+            {locale === 'id' ? 'Reset Filter' : 'Reset Filters'}
           </button>
         </div>
       ) : (
@@ -269,7 +286,9 @@ function CatalogContent() {
 
       {meta.total > 0 && (
         <p className="text-center text-sm text-slate-400 mt-4">
-          Menampilkan {(page - 1) * meta.pageSize + 1}–{Math.min(page * meta.pageSize, meta.total)} dari {meta.total} mobil
+          {locale === 'id' 
+            ? `Menampilkan ${(page - 1) * meta.pageSize + 1}–${Math.min(page * meta.pageSize, meta.total)} dari ${meta.total} mobil`
+            : `Showing ${(page - 1) * meta.pageSize + 1}–${Math.min(page * meta.pageSize, meta.total)} of ${meta.total} cars`}
         </p>
       )}
     </div>

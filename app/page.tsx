@@ -15,27 +15,7 @@ import { getPopularCars } from '@/services/cars';
 import type { Car as CarType } from '@/types';
 import { useSiteSettings } from '@/hooks/use-site-settings';
 import { formatWhatsAppNumber } from '@/lib/utils';
-
-const HOW_IT_WORKS = [
-  {
-    step: '1',
-    title: 'Pilih Mobil',
-    desc: 'Cari mobil yang sesuai dengan kebutuhan Anda. Filter berdasarkan jenis, harga, dan transmisi.',
-    icon: Car,
-  },
-  {
-    step: '2',
-    title: 'Tentukan Tanggal',
-    desc: 'Pilih tanggal mulai dan selesai sewa. Harga dihitung secara otomatis dan transparan.',
-    icon: Clock,
-  },
-  {
-    step: '3',
-    title: 'Konfirmasi',
-    desc: 'Lakukan pembayaran dan mobil siap digunakan pada waktu yang telah ditentukan.',
-    icon: Check,
-  },
-];
+import { useLanguage } from '@/hooks/use-language';
 
 const FAQS = [
   {
@@ -97,11 +77,93 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const { settings } = useSiteSettings();
+  const { locale, t } = useLanguage();
   
-  const heroTitle = settings?.hero_title || 'Sewa Mobil Premium,\nBebas Ribet';
-  const heroSubtitle = settings?.hero_subtitle || 'Pilihan armada terbaik dengan harga transparan dan asuransi penuh untuk perjalanan Anda yang tak terlupakan.';
+  const heroTitleDefault = locale === 'id' 
+    ? 'Sewa Mobil Premium,\nBebas Ribet' 
+    : 'Premium Car Rental,\nHassle-Free';
+  const heroSubtitleDefault = locale === 'id'
+    ? 'Pilihan armada terbaik dengan harga transparan dan asuransi penuh untuk perjalanan Anda yang tak terlupakan.'
+    : 'The best fleet selections with transparent pricing and full insurance for your unforgettable journey.';
+
+  const heroTitle = settings?.hero_title || heroTitleDefault;
+  const heroSubtitle = settings?.hero_subtitle || heroSubtitleDefault;
   const phone = formatWhatsAppNumber(settings?.contact_phone || '6281378821654');
-  const faqsToRender = settings?.faqs && settings.faqs.length > 0 ? settings.faqs : FAQS;
+
+  const fallbackFaqs = locale === 'id' ? FAQS : [
+    {
+      q: 'What is the minimum rental duration?',
+      a: 'The minimum rental is 1 day (24 hours). There is no maximum limit, you can rent weekly or monthly with lower rates.',
+    },
+    {
+      q: 'Is fuel included in the price?',
+      a: 'The rental price does not include fuel (BBM). Customers are expected to refill fuel according to their usage during the rental period.',
+    },
+    {
+      q: 'What if there is a problem on the road?',
+      a: 'All our fleets are covered by insurance. Contact our customer service which is ready to assist you 24 hours.',
+    },
+    {
+      q: 'Is a security deposit required?',
+      a: 'Yes, we require a security deposit as a guarantee, which will be 100% refunded after the rental period is completed without issues.',
+    },
+    {
+      q: 'Is self-drive rental available?',
+      a: 'Yes, we provide both self-drive options (without driver) and with driver according to your needs.',
+    },
+  ];
+
+  const faqsToRender = settings?.faqs && settings.faqs.length > 0 ? settings.faqs : fallbackFaqs;
+
+  const howItWorksData = [
+    {
+      step: '1',
+      title: locale === 'id' ? 'Pilih Mobil' : 'Select Car',
+      desc: locale === 'id' 
+        ? 'Cari mobil yang sesuai dengan kebutuhan Anda. Filter berdasarkan jenis, harga, dan transmisi.' 
+        : 'Find the car that fits your needs. Filter by type, price, and transmission.',
+      icon: Car,
+    },
+    {
+      step: '2',
+      title: locale === 'id' ? 'Tentukan Tanggal' : 'Choose Dates',
+      desc: locale === 'id' 
+        ? 'Pilih tanggal mulai dan selesai sewa. Harga dihitung secara otomatis dan transparan.' 
+        : 'Select start and end dates for the rental. Price is calculated automatically and transparently.',
+      icon: Clock,
+    },
+    {
+      step: '3',
+      title: locale === 'id' ? 'Konfirmasi' : 'Confirmation',
+      desc: locale === 'id' 
+        ? 'Lakukan pembayaran dan mobil siap digunakan pada waktu yang telah ditentukan.' 
+        : 'Complete the payment and the car is ready to use at the scheduled time.',
+      icon: Check,
+    },
+  ];
+
+  const trustBadges = [
+    { 
+      icon: Shield, 
+      title: locale === 'id' ? 'Proteksi Penuh' : 'Full Protection', 
+      desc: locale === 'id' ? 'Asuransi komprehensif' : 'Comprehensive insurance' 
+    },
+    { 
+      icon: Clock, 
+      title: locale === 'id' ? 'Layanan VIP' : 'VIP Service', 
+      desc: locale === 'id' ? 'Bantuan 24/7 di mana saja' : '24/7 assistance anywhere' 
+    },
+    { 
+      icon: Check, 
+      title: locale === 'id' ? 'Kondisi Prima' : 'Prime Condition', 
+      desc: locale === 'id' ? 'Standar perawatan tertinggi' : 'Highest maintenance standard' 
+    },
+    { 
+      icon: Car, 
+      title: locale === 'id' ? 'Koleksi Eksklusif' : 'Exclusive Fleet', 
+      desc: locale === 'id' ? 'Hanya kendaraan terbaik' : 'Only the best vehicles' 
+    },
+  ];
 
   useEffect(() => {
     getPopularCars(6)
@@ -142,7 +204,7 @@ export default function HomePage() {
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-bold uppercase tracking-widest rounded-full hover:shadow-[0_0_30px_rgba(214,175,54,0.4)] transition-all duration-300"
                   >
-                    Pilih Mobil Anda
+                    {locale === 'id' ? 'Pilih Mobil Anda' : 'Choose Your Car'}
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                   </motion.a>
                 </Link>
@@ -153,7 +215,7 @@ export default function HomePage() {
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-transparent hover:bg-white/5 text-white font-bold uppercase tracking-widest rounded-full border border-white/20 transition-all duration-300"
                   >
-                    Lihat Cara Kerja
+                    {locale === 'id' ? 'Lihat Cara Kerja' : 'How It Works'}
                   </motion.a>
                 </Link>
               </motion.div>
@@ -161,7 +223,7 @@ export default function HomePage() {
               <motion.div variants={fadeUpVariants} className="flex items-center gap-8 pt-8 border-t border-zinc-800">
                 <div>
                   <p className="text-3xl font-light text-white">500+</p>
-                  <p className="text-xs text-zinc-500 uppercase tracking-widest mt-1">Klien Eksklusif</p>
+                  <p className="text-xs text-zinc-500 uppercase tracking-widest mt-1">{t('home.client_vip')}</p>
                 </div>
                 <div className="w-px h-12 bg-zinc-800" />
                 <div>
@@ -169,7 +231,7 @@ export default function HomePage() {
                     <p className="text-3xl font-light text-white">4.9</p>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none" className="text-amber-500 dark:text-white"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                   </div>
-                  <p className="text-xs text-zinc-500 uppercase tracking-widest mt-1">Rating Kepuasan</p>
+                  <p className="text-xs text-zinc-500 uppercase tracking-widest mt-1">{t('home.rating_sat')}</p>
                 </div>
               </motion.div>
             </motion.div>
@@ -229,11 +291,15 @@ export default function HomePage() {
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 flex flex-col shadow-[0_0_30px_rgba(214,175,54,0.15)]"
                 >
                   <div className="flex flex-col gap-1 mb-4">
-                    <div className="text-white font-bold tracking-wide">Member VIP</div>
-                    <Link href="/register" className="text-primary text-xs font-semibold uppercase tracking-widest hover:text-primary/80 transition-colors">Daftar Sekarang &rarr;</Link>
+                    <div className="text-white font-bold tracking-wide">{t('home.vip_title')}</div>
+                    <Link href="/register" className="text-primary text-xs font-semibold uppercase tracking-widest hover:text-primary/80 transition-colors">{t('home.vip_action')}</Link>
                   </div>
                   <p className="text-zinc-400 text-sm leading-relaxed">
-                    Sering booking? Gabung member untuk menikmati <span className="text-white font-semibold">harga spesial</span> dan prioritas layanan!
+                    {locale === 'id' ? (
+                      <>Sering booking? Gabung member untuk menikmati <span className="text-white font-semibold">harga spesial</span> dan prioritas layanan!</>
+                    ) : (
+                      <>Rent frequently? Join as a member to enjoy <span className="text-white font-semibold">special prices</span> and priority service!</>
+                    )}
                   </p>
                 </motion.div>
               </div>
@@ -252,12 +318,7 @@ export default function HomePage() {
           className="container mx-auto px-2 sm:px-6 lg:px-8 max-w-7xl"
         >
           <div className="grid grid-cols-4 gap-2 sm:gap-6">
-            {[
-              { icon: Shield, title: 'Proteksi Penuh', desc: 'Asuransi komprehensif' },
-              { icon: Clock, title: 'Layanan VIP', desc: 'Bantuan 24/7 di mana saja' },
-              { icon: Check, title: 'Kondisi Prima', desc: 'Standar perawatan tertinggi' },
-              { icon: Car, title: 'Koleksi Eksklusif', desc: 'Hanya kendaraan terbaik' },
-            ].map((item) => (
+            {trustBadges.map((item) => (
               <motion.div key={item.title} variants={fadeUpVariants} className="flex flex-col items-center text-center p-2 sm:p-6 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors border border-transparent hover:border-slate-100 dark:hover:border-white/5">
                 <div className="w-10 h-10 sm:w-16 sm:h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center mb-3 sm:mb-6 shadow-lg dark:shadow-[0_0_20px_rgba(214,175,54,0.3)]">
                   <item.icon className="w-5 h-5 sm:w-8 sm:h-8" />
@@ -283,8 +344,8 @@ export default function HomePage() {
             transition={{ duration: 0.5 }}
             className="mb-6 sm:mb-12"
           >
-            <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white tracking-tight">Koleksi Terbatas</h2>
-            <p className="text-slate-600 dark:text-zinc-400 mt-4 text-lg font-light">Pilihan armada eksklusif yang paling sering disewa oleh klien VIP kami.</p>
+            <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white tracking-tight">{t('home.limited_collection')}</h2>
+            <p className="text-slate-600 dark:text-zinc-400 mt-4 text-lg font-light">{t('home.limited_desc')}</p>
           </motion.div>
 
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
@@ -311,7 +372,7 @@ export default function HomePage() {
                 transition={springTransition}
                 className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-bold uppercase tracking-widest rounded-full hover:shadow-[0_0_30px_rgba(214,175,54,0.4)] transition-all duration-300"
               >
-                Katalog Selengkapnya
+                {t('home.full_catalog')}
                 <ArrowRight className="w-4 h-4" />
               </motion.a>
             </Link>
@@ -329,14 +390,14 @@ export default function HomePage() {
           className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl"
         >
           <motion.div variants={fadeUpVariants} className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-slate-900 dark:text-white tracking-tight">Cara Memesan</h2>
+            <h2 className="text-4xl font-bold text-slate-900 dark:text-white tracking-tight">{t('home.how_to_book')}</h2>
             <p className="text-slate-600 dark:text-zinc-400 mt-4 max-w-xl mx-auto font-light text-lg">
-              Proses penyewaan eksklusif yang cepat dan tanpa hambatan. Pesan dari kenyamanan rumah Anda.
+              {t('home.how_to_book_desc')}
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {HOW_IT_WORKS.map((item) => (
+            {howItWorksData.map((item) => (
               <motion.div key={item.step} variants={fadeUpVariants} className="bg-slate-50 dark:bg-black rounded-2xl p-8 border border-slate-200 dark:border-white/5 text-center hover:bg-white dark:hover:bg-white/5 hover:border-primary/50 dark:hover:border-primary/50 shadow-sm hover:shadow-xl dark:shadow-none dark:hover:shadow-[0_0_30px_rgba(214,175,54,0.1)] transition-all duration-500 group">
                 <motion.div 
                   whileHover={{ scale: 1.1, rotate: 5 }}
@@ -366,7 +427,7 @@ export default function HomePage() {
           className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl"
         >
           <motion.div variants={fadeUpVariants} className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-slate-900 dark:text-white tracking-tight">Pertanyaan Teratas</h2>
+            <h2 className="text-4xl font-bold text-slate-900 dark:text-white tracking-tight">{t('home.faq_title')}</h2>
           </motion.div>
 
           <div className="space-y-4">
@@ -416,10 +477,10 @@ export default function HomePage() {
           className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center relative z-10"
         >
           <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6 tracking-tight">
-            Mulai Perjalanan Eksklusif Anda.
+            {t('home.cta_title')}
           </h2>
           <p className="text-zinc-300 dark:text-zinc-400 text-lg lg:text-xl mb-12 font-light max-w-2xl mx-auto">
-            Jangan kompromi untuk kenyamanan. Pesan sekarang dan nikmati standar layanan kelas atas kami.
+            {t('home.cta_desc')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/cars" passHref legacyBehavior>
@@ -429,7 +490,7 @@ export default function HomePage() {
                 transition={springTransition}
                 className="inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground font-bold uppercase tracking-widest rounded-full hover:shadow-[0_0_30px_rgba(214,175,54,0.4)] transition-all duration-300"
               >
-                Lihat Katalog
+                {t('home.view_catalog')}
               </motion.a>
             </Link>
             <motion.a
@@ -441,7 +502,7 @@ export default function HomePage() {
               transition={springTransition}
               className="inline-flex items-center justify-center px-8 py-4 bg-transparent hover:bg-white/5 text-white font-bold uppercase tracking-widest rounded-full border border-white/20 transition-all duration-300"
             >
-              Hubungi Admin
+              {t('home.contact_admin')}
             </motion.a>
           </div>
         </motion.div>

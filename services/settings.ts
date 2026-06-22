@@ -46,6 +46,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
           a: 'Ya, kami menyediakan opsi sewa lepas kunci (tanpa supir) maupun dengan supir sesuai kebutuhan Anda.',
         },
       ],
+      default_locale: 'id',
       updated_at: new Date().toISOString(),
     };
   }

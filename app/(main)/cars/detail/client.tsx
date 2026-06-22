@@ -14,6 +14,7 @@ import { supabase } from '@/lib/supabase';
 import { formatCurrency, formatDate, formatWhatsAppNumber } from '@/lib/utils';
 import type { Car } from '@/types';
 import { useSiteSettings } from '@/hooks/use-site-settings';
+import { useLanguage } from '@/hooks/use-language';
 
 export default function CarDetailClient() {
   const [car, setCar] = useState<Car | null>(null);
@@ -31,6 +32,7 @@ export default function CarDetailClient() {
   
   const { user, profile } = useAuth();
   const { settings } = useSiteSettings();
+  const { locale, t } = useLanguage();
   const router = useRouter();
 
   const searchParams = useSearchParams();
@@ -49,9 +51,9 @@ export default function CarDetailClient() {
     if (!id) return;
     getCarById(id)
       .then(setCar)
-      .catch(() => toast.error('Mobil tidak ditemukan'))
+      .catch(() => toast.error(locale === 'id' ? 'Mobil tidak ditemukan' : 'Car not found'))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, locale]);
 
   useEffect(() => {
     if (user?.id) {
@@ -64,8 +66,8 @@ export default function CarDetailClient() {
           if (data?.discount_rate) setDiscountRate(data.discount_rate);
         });
     }
-    if (profile?.full_name && !guestName) {
-      setGuestName(profile.full_name);
+    if (profile?.username && !guestName) {
+      setGuestName(profile.username);
     }
   }, [user, profile]);
 
@@ -90,7 +92,7 @@ export default function CarDetailClient() {
 
   const handleGetLocation = () => {
     if (!navigator.geolocation) {
-      toast.error('Browser Anda tidak mendukung fitur lokasi');
+      toast.error(locale === 'id' ? 'Browser Anda tidak mendukung fitur lokasi' : 'Your browser does not support location features');
       return;
     }
 
@@ -100,14 +102,18 @@ export default function CarDetailClient() {
         const { latitude, longitude } = position.coords;
         setGuestLocation(`https://maps.google.com/?q=${latitude},${longitude}`);
         setIsGettingLocation(false);
-        toast.success('Lokasi otomatis berhasil didapatkan!');
+        toast.success(locale === 'id' ? 'Lokasi otomatis berhasil didapatkan!' : 'Automatic location retrieved successfully!');
       },
       (error) => {
         setIsGettingLocation(false);
         if (error.code === error.PERMISSION_DENIED) {
-          toast.error('Gagal mendapat lokasi otomatis. Silakan izinkan akses GPS di pengaturan browser/HP Anda lalu ketuk tombol lokasi secara manual.');
+          toast.error(locale === 'id' 
+            ? 'Gagal mendapat lokasi otomatis. Silakan izinkan akses GPS di pengaturan browser/HP Anda lalu ketuk tombol lokasi secara manual.' 
+            : 'Failed to retrieve automatic location. Please allow GPS access in your browser/device settings and tap the location button manually.');
         } else {
-          toast.error('Gagal mendapatkan lokasi. Pastikan GPS Anda aktif.');
+          toast.error(locale === 'id' 
+            ? 'Gagal mendapatkan lokasi. Pastikan GPS Anda aktif.' 
+            : 'Failed to retrieve location. Make sure your GPS is enabled.');
         }
       },
       { timeout: 10000, maximumAge: 0, enableHighAccuracy: true }
@@ -124,19 +130,21 @@ export default function CarDetailClient() {
 
   const handleBook = async () => {
     if (!startDate || !endDate) {
-      toast.error('Pilih tanggal sewa terlebih dahulu');
+      toast.error(locale === 'id' ? 'Pilih tanggal sewa terlebih dahulu' : 'Please select rental dates first');
       return;
     }
     if (totalDays <= 0) {
-      toast.error('Tanggal selesai harus setelah tanggal mulai');
+      toast.error(locale === 'id' ? 'Tanggal selesai harus setelah tanggal mulai' : 'End date must be after start date');
       return;
     }
     if (!car?.available) {
-      toast.error('Mobil tidak tersedia saat ini');
+      toast.error(locale === 'id' ? 'Mobil tidak tersedia saat ini' : 'Car is currently unavailable');
       return;
     }
     if (!guestName || (!isMember && !guestPhone)) {
-      toast.error('Mohon lengkapi Nama Lengkap (dan No. WA untuk guest) untuk melanjutkan');
+      toast.error(locale === 'id' 
+        ? 'Mohon lengkapi Nama Lengkap (dan No. WA untuk guest) untuk melanjutkan' 
+        : 'Please fill in Full Name (and WA Number for guest) to proceed');
       return;
     }
 
@@ -156,26 +164,41 @@ export default function CarDetailClient() {
         guest_location: guestLocation,
       });
       
-      toast.success('Booking berhasil! Mengalihkan ke WhatsApp...');
+      toast.success(locale === 'id' ? 'Booking berhasil! Mengalihkan ke WhatsApp...' : 'Booking successful! Redirecting to WhatsApp...');
       
       // Build WhatsApp Message
       const adminPhone = formatWhatsAppNumber(settings?.contact_phone || '6281378821654');
       const customerName = guestName;
       const siteTitle = settings?.site_title || 'RentAja';
-      const waMessage = `Halo ${siteTitle}, saya ingin menyewa mobil:
       
-*Detail Mobil:*
-- Mobil: ${car?.brand} ${car?.model}
-- Tanggal Sewa: ${formatDate(startDate)} s/d ${formatDate(endDate)} (${totalDays} hari)
-- Total Harga: ${formatCurrency(totalPrice)}
+      const greeting = t('detail.wa_greeting').replace('{title}', siteTitle);
+      const detailsHeader = `*${t('detail.wa_car_details')}:*`;
+      const carLine = `- ${t('detail.wa_car')}: ${car?.brand} ${car?.model}`;
+      const dateLine = `- ${t('detail.wa_rent_date')}: ${formatDate(startDate)} s/d ${formatDate(endDate)} (${totalDays} ${t('detail.days')})`;
+      const priceLine = `- ${t('detail.wa_total_price')}: ${formatCurrency(totalPrice)}`;
+      
+      const customerHeader = `*${t('detail.wa_customer_data')}:*`;
+      const nameLine = `- ${t('detail.wa_name')}: ${customerName}`;
+      const phoneLine = `- ${t('detail.wa_phone')}: ${guestPhone}`;
+      const pickupLine = guestLocation ? `- ${t('detail.wa_pickup')}: ${guestLocation}` : '';
+      const notesLine = notes ? `- ${t('detail.wa_notes')}: ${notes}` : '';
+      
+      const footerMsg = t('detail.wa_footer');
+      
+      const waMessage = `${greeting}
+      
+${detailsHeader}
+${carLine}
+${dateLine}
+${priceLine}
 
-*Data Pemesan:*
-- Nama: ${customerName}
-- No. WA: ${guestPhone}
-${guestLocation ? `- Lokasi Jemput/Antar: ${guestLocation}` : ''}
-${notes ? `- Catatan: ${notes}` : ''}
+${customerHeader}
+${nameLine}
+${phoneLine}
+${pickupLine}
+${notesLine}
 
-Mohon konfirmasinya. Terima kasih!`;
+${footerMsg}`;
 
       const encodedMessage = encodeURIComponent(waMessage);
       const waUrl = `https://wa.me/${adminPhone}?text=${encodedMessage}`;
@@ -184,7 +207,7 @@ Mohon konfirmasinya. Terima kasih!`;
       window.location.href = waUrl;
       
     } catch (err: any) {
-      toast.error(err.message || 'Gagal membuat booking');
+      toast.error(err.message || (locale === 'id' ? 'Gagal membuat booking' : 'Failed to create booking'));
     } finally {
       setBookingLoading(false);
     }
@@ -208,13 +231,20 @@ Mohon konfirmasinya. Terima kasih!`;
   if (!car) {
     return (
       <div className="container mx-auto px-4 max-w-7xl py-20 text-center">
-        <p className="text-xl text-slate-500">Mobil tidak ditemukan</p>
+        <p className="text-xl text-slate-500">{locale === 'id' ? 'Mobil tidak ditemukan' : 'Car not found'}</p>
         <Link href="/cars" className="mt-4 inline-block text-blue-600 hover:underline">
-          Kembali ke katalog
+          {t('detail.back_catalog')}
         </Link>
       </div>
     );
   }
+
+  const specsData = [
+    { icon: Users, label: t('detail.capacity'), value: `${car.seats} ${t('detail.seats')}` },
+    { icon: Settings, label: t('detail.transmission'), value: car.transmission },
+    { icon: Fuel, label: t('detail.fuel'), value: car.fuel_type },
+    { icon: Star, label: t('detail.rating'), value: '4.9 / 5' },
+  ];
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-8">
@@ -224,7 +254,7 @@ Mohon konfirmasinya. Terima kasih!`;
         className="inline-flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white mb-6 transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
-        Kembali ke katalog
+        {t('detail.back_catalog')}
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -293,7 +323,7 @@ Mohon konfirmasinya. Terima kasih!`;
                     ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
                     : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
                 }`}>
-                  {car.available ? 'Tersedia' : 'Tidak Tersedia'}
+                  {car.available ? t('detail.available') : t('detail.unavailable')}
                 </span>
                 <span className="text-xs px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
                   {car.category}
@@ -308,18 +338,13 @@ Mohon konfirmasinya. Terima kasih!`;
               <p className="text-2xl font-bold text-slate-900 dark:text-white">
                 {formatCurrency(car.price_per_day)}
               </p>
-              <p className="text-sm text-slate-500 dark:text-slate-400">per hari</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{locale === 'id' ? 'per hari' : 'per day'}</p>
             </div>
           </div>
 
           {/* Specs */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {[
-              { icon: Users, label: 'Kapasitas', value: `${car.seats} Kursi` },
-              { icon: Settings, label: 'Transmisi', value: car.transmission },
-              { icon: Fuel, label: 'Bahan Bakar', value: car.fuel_type },
-              { icon: Star, label: 'Rating', value: '4.9 / 5' },
-            ].map((spec) => (
+            {specsData.map((spec) => (
               <div key={spec.label} className="p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
                 <spec.icon className="w-4 h-4 text-blue-600 dark:text-blue-400 mb-1.5" />
                 <p className="text-xs text-slate-500 dark:text-slate-400">{spec.label}</p>
@@ -331,7 +356,7 @@ Mohon konfirmasinya. Terima kasih!`;
           {/* Description */}
           {car.description && (
             <div>
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-3">Deskripsi</h2>
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-3">{t('detail.description')}</h2>
               <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{car.description}</p>
             </div>
           )}
@@ -339,7 +364,7 @@ Mohon konfirmasinya. Terima kasih!`;
           {/* Features */}
           {car.features && car.features.length > 0 && (
             <div>
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-3">Fitur Unggulan</h2>
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-3">{t('detail.features')}</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {car.features.map((feature) => (
                   <div key={feature} className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
@@ -356,13 +381,13 @@ Mohon konfirmasinya. Terima kasih!`;
         <div>
           <div className="sticky top-24 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-5">
-              Buat Pemesanan
+              {t('detail.create_booking')}
             </h2>
 
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                  Tanggal Mulai
+                  {t('detail.start_date')}
                 </label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -381,7 +406,7 @@ Mohon konfirmasinya. Terima kasih!`;
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                  Tanggal Selesai
+                  {t('detail.end_date')}
                 </label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -397,25 +422,25 @@ Mohon konfirmasinya. Terima kasih!`;
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                  Catatan (opsional)
+                  {t('detail.notes')}
                 </label>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   rows={2}
-                  placeholder="Permintaan khusus..."
+                  placeholder={t('detail.notes_placeholder')}
                   className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                 />
               </div>
 
               {/* Data Diri (Guest or Optional override for Member) */}
               <div className="border-t border-slate-200 dark:border-slate-700 pt-4 mt-4 space-y-4">
-                <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Data Diri & Pengiriman</h3>
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-white">{t('detail.personal_data')}</h3>
                 
                 {!isMember && (
                   <div className="bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 text-xs p-3 rounded-lg border border-blue-200 dark:border-blue-800/30">
-                    <p className="font-semibold mb-1">Anda booking sebagai Guest.</p>
-                    <p>Daftar/Login sekarang untuk menikmati fitur khusus member dan promo eksklusif!</p>
+                    <p className="font-semibold mb-1">{t('detail.guest_warning_title')}</p>
+                    <p>{t('detail.guest_warning_desc')}</p>
                   </div>
                 )}
 
@@ -424,7 +449,7 @@ Mohon konfirmasinya. Terima kasih!`;
                     type="text"
                     value={guestName}
                     onChange={(e) => setGuestName(e.target.value)}
-                    placeholder="Nama Lengkap"
+                    placeholder={t('detail.placeholder_name')}
                     className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -434,7 +459,7 @@ Mohon konfirmasinya. Terima kasih!`;
                     type="text"
                     value={guestPhone}
                     onChange={(e) => setGuestPhone(e.target.value)}
-                    placeholder="Nomor WhatsApp"
+                    placeholder={t('detail.placeholder_phone')}
                     className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -444,7 +469,7 @@ Mohon konfirmasinya. Terima kasih!`;
                       type="text"
                       value={guestLocation}
                       onChange={(e) => setGuestLocation(e.target.value)}
-                      placeholder="Koordinat Titik Lokasi (Opsional)"
+                      placeholder={t('detail.placeholder_coords')}
                       className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <button
@@ -452,7 +477,7 @@ Mohon konfirmasinya. Terima kasih!`;
                       onClick={handleGetLocation}
                       disabled={isGettingLocation}
                       className="shrink-0 px-4 flex items-center justify-center bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
-                      title="Ambil Lokasi Saat Ini (GPS)"
+                      title={locale === 'id' ? 'Ambil Lokasi Saat Ini (GPS)' : 'Get Current Location (GPS)'}
                     >
                       {isGettingLocation ? (
                         <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
@@ -461,7 +486,7 @@ Mohon konfirmasinya. Terima kasih!`;
                       )}
                     </button>
                   </div>
-                  <p className="text-xs text-slate-500 mt-1.5 ml-1">Ketuk ikon di sebelah kanan untuk mendeteksi lokasi otomatis via GPS.</p>
+                  <p className="text-xs text-slate-500 mt-1.5 ml-1">{t('detail.gps_help')}</p>
                 </div>
               </div>
 
@@ -470,7 +495,7 @@ Mohon konfirmasinya. Terima kasih!`;
                 <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 space-y-2">
                   <div className="flex justify-between text-sm">
                      <span className="text-slate-600 dark:text-slate-400">
-                       {formatCurrency(car.price_per_day)} × {totalDays} hari
+                       {formatCurrency(car.price_per_day)} × {totalDays} {t('detail.days')}
                      </span>
                      <span className="text-slate-900 dark:text-white font-medium">
                        {formatCurrency(basePrice)}
@@ -479,13 +504,13 @@ Mohon konfirmasinya. Terima kasih!`;
                   
                   {discountRate > 0 && (
                     <div className="flex justify-between text-sm text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-50 dark:bg-emerald-900/20 p-2 rounded-lg -mx-2 px-2">
-                      <span>Promo Member ({discountRate}%)</span>
+                      <span>{t('detail.promo_member')} ({discountRate}%)</span>
                       <span>-{formatCurrency(discountAmount)}</span>
                     </div>
                   )}
 
                   <div className="border-t border-slate-200 dark:border-slate-700 pt-2 flex justify-between">
-                     <span className="font-semibold text-slate-900 dark:text-white">Total</span>
+                     <span className="font-semibold text-slate-900 dark:text-white">{t('detail.total')}</span>
                      <span className="font-bold text-blue-600 dark:text-blue-400 text-lg">
                        {formatCurrency(totalPrice)}
                      </span>
@@ -500,14 +525,14 @@ Mohon konfirmasinya. Terima kasih!`;
               >
                 {bookingLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                 {!car.available
-                  ? 'Tidak Tersedia'
+                  ? t('detail.unavailable')
                   : bookingLoading
-                  ? 'Memproses...'
-                  : 'Pesan Sekarang'}
+                  ? t('detail.processing')
+                  : t('detail.book_now')}
               </button>
 
               <p className="text-xs text-slate-400 text-center">
-                Konfirmasi dikirim dalam 1×24 jam. Tidak ada pembayaran di muka.
+                {t('detail.info_footer')}
               </p>
             </div>
           </div>

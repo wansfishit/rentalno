@@ -1,23 +1,17 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useMemo } from 'react';
 import Link from 'next/link';
 import Logo from '@/components/logo';
 import { useSiteSettings } from '@/hooks/use-site-settings';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Car, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
-
-const schema = z.object({
-  email: z.string().email('Email tidak valid'),
-  password: z.string().min(6, 'Password minimal 6 karakter'),
-});
-
-type FormData = z.infer<typeof schema>;
+import { useLanguage } from '@/hooks/use-language';
 
 function LoginForm() {
   const [showPass, setShowPass] = useState(false);
@@ -25,6 +19,14 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') || '/';
+  const { locale, t } = useLanguage();
+
+  const schema = useMemo(() => z.object({
+    email: z.string().email(t('auth.invalid_email')),
+    password: z.string().min(6, t('auth.password_min')),
+  }), [t]);
+
+  type FormData = z.infer<typeof schema>;
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -39,14 +41,14 @@ function LoginForm() {
 
     if (error) {
       toast.error(error.message === 'Invalid login credentials'
-        ? 'Email atau password salah'
+        ? (locale === 'id' ? 'Email atau password salah' : 'Incorrect email or password')
         : error.message
       );
       setLoading(false);
       return;
     }
 
-    toast.success('Berhasil masuk!');
+    toast.success(locale === 'id' ? 'Berhasil masuk!' : 'Login successful!');
     router.push(redirect);
     router.refresh();
   };
@@ -55,7 +57,7 @@ function LoginForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
         <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-          Email
+          {t('auth.email')}
         </label>
         <input
           {...register('email')}
@@ -70,7 +72,7 @@ function LoginForm() {
 
       <div>
         <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-          Password
+          {t('auth.password')}
         </label>
         <div className="relative">
           <input
@@ -98,7 +100,7 @@ function LoginForm() {
         className="w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
       >
         {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-        {loading ? 'Memproses...' : 'Masuk'}
+        {loading ? t('detail.processing') : t('navbar.login')}
       </button>
     </form>
   );
@@ -106,6 +108,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   const { settings } = useSiteSettings();
+  const { locale, t } = useLanguage();
   const siteTitle = settings?.site_title || 'RentAja';
 
   return (
@@ -120,8 +123,8 @@ export default function LoginPage() {
           </div>
 
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-1.5">Selamat datang kembali</h1>
-            <p className="text-slate-500 dark:text-slate-400 text-sm">Masuk untuk melanjutkan</p>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-1.5">{t('auth.welcome')}</h1>
+            <p className="text-slate-500 dark:text-slate-400 text-sm">{t('auth.login_continue')}</p>
           </div>
 
           <Suspense fallback={<div className="h-40 animate-pulse bg-slate-100 rounded-xl" />}>
@@ -129,9 +132,9 @@ export default function LoginPage() {
           </Suspense>
 
           <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
-            Belum punya akun?{' '}
+            {t('auth.no_account')}{' '}
             <Link href="/register" className="text-blue-600 dark:text-blue-400 font-medium hover:underline">
-              Daftar gratis
+              {t('auth.register_free')}
             </Link>
           </p>
         </div>
@@ -147,7 +150,7 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-slate-900/20" />
         <div className="absolute bottom-12 left-12 right-12">
           <p className="text-white text-xl font-semibold mb-2">
-            &ldquo;Pengalaman sewa mobil yang menyenangkan dan terpercaya&rdquo;
+            &ldquo;{locale === 'id' ? 'Pengalaman sewa mobil yang menyenangkan dan terpercaya' : 'A pleasant and reliable car rental experience'}&rdquo;
           </p>
           <p className="text-white/60 text-sm">— {siteTitle} Customer Review</p>
         </div>

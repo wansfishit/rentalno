@@ -7,25 +7,27 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Home, Car, Globe, User, Phone, Instagram, Facebook } from 'lucide-react';
 import { useSiteSettings } from '@/hooks/use-site-settings';
 import { cn, formatSocialLink } from '@/lib/utils';
-
-const TABS = [
-  { id: 'home', href: '/', icon: Home, label: 'Beranda' },
-  { id: 'cars', href: '/cars', icon: Car, label: 'Armada' },
-  { id: 'contact', href: '#contact', icon: Globe, label: 'Sosial' },
-  { id: 'profile', href: '/profile', icon: User, label: 'Profil' },
-];
+import { useLanguage } from '@/hooks/use-language';
 
 export default function LiquidTabBar() {
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState('home');
   const [showSocials, setShowSocials] = useState(false);
   const { settings } = useSiteSettings();
+  const { locale, t } = useLanguage();
   
   const phone = settings?.contact_phone || '6281378821654';
   const waLink = settings?.social_whatsapp || phone;
   const igLink = settings?.social_instagram || 'rentalno.id';
   const fbLink = settings?.social_facebook || 'rentalno';
   const tiktokLink = settings?.social_tiktok || 'rentalno';
+
+  const tabs = [
+    { id: 'home', href: '/', icon: Home, label: locale === 'id' ? 'Beranda' : 'Home' },
+    { id: 'cars', href: '/cars', icon: Car, label: t('navbar.cars') },
+    { id: 'contact', href: '#contact', icon: Globe, label: locale === 'id' ? 'Sosial' : 'Social' },
+    { id: 'profile', href: '/profile', icon: User, label: locale === 'id' ? 'Profil' : 'Profile' },
+  ];
 
   useEffect(() => {
     if (showSocials) {
@@ -157,7 +159,7 @@ export default function LiquidTabBar() {
             className="absolute inset-0 z-0 opacity-80"
             style={{ filter: 'url(#gooey)' }}
           >
-            {TABS.map((tab) => (
+            {tabs.map((tab) => (
               tab.id === activeTab && (
                 <motion.div
                   key="active-blob"
@@ -167,7 +169,7 @@ export default function LiquidTabBar() {
                     width: 'calc(100% / 4 - 8px)',
                     height: 'calc(100% - 12px)',
                     top: '6px',
-                    left: `calc((100% / 4) * ${TABS.findIndex(t => t.id === tab.id)} + 4px)`
+                    left: `calc((100% / 4) * ${tabs.findIndex(t => t.id === tab.id)} + 4px)`
                   }}
                   transition={{
                     type: "spring",
@@ -182,7 +184,7 @@ export default function LiquidTabBar() {
 
           {/* Icons / Interaction Layer */}
           <div className="relative z-10 flex items-center w-full">
-            {TABS.map((tab) => {
+            {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
               
               const Inner = (
@@ -204,6 +206,7 @@ export default function LiquidTabBar() {
                       strokeWidth={isActive ? 2.5 : 2}
                     />
                   </motion.div>
+                  <span className="sr-only">{tab.label}</span>
                 </div>
               );
 
@@ -213,6 +216,7 @@ export default function LiquidTabBar() {
                     key={tab.id} 
                     onClick={() => setShowSocials(!showSocials)}
                     className="relative cursor-pointer focus:outline-none"
+                    aria-label={tab.label}
                   >
                     {Inner}
                   </button>
@@ -225,6 +229,7 @@ export default function LiquidTabBar() {
                   href={tab.href}
                   className="relative cursor-pointer"
                   onClick={() => setShowSocials(false)}
+                  aria-label={tab.label}
                 >
                   {Inner}
                 </Link>

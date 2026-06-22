@@ -11,10 +11,38 @@ export async function createBooking(
   }
 ): Promise<void> {
   if (data.user_id) {
-    await supabase.from('profiles').upsert({ 
-      id: data.user_id,
-      username: data.guest_name || 'User'
-    }, { onConflict: 'id' });
+    const { data: existingProfile, error: getError } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', data.user_id)
+      .maybeSingle();
+
+    if (getError) {
+      throw new Error(`Failed to query existing profile: ${getError.message}`);
+    }
+
+    if (existingProfile) {
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ username: data.guest_name || 'User' })
+        .eq('id', data.user_id);
+      
+      if (updateError) {
+        throw new Error(`Profile update failed: ${updateError.message}`);
+      }
+    } else {
+      const { error: insertError } = await supabase
+        .from('profiles')
+        .insert({ 
+          id: data.user_id,
+          username: data.guest_name || 'User',
+          role: 'user'
+        });
+      
+      if (insertError) {
+        throw new Error(`Profile insert failed: ${insertError.message}`);
+      }
+    }
   }
 
   const { error } = await supabase
@@ -106,4 +134,80 @@ export async function getAdminStats() {
     totalBookings: totalBookings || 0,
     totalRevenue,
   };
+}
+
+export interface RecentActivityItem {
+  action: string;
+  type: 'booking' | 'confirm' | 'complete' | 'user' | 'cancel';
+  created_at: string;
+}
+
+export async function getAdminRecentActivities(): Promise<RecentActivityItem[]> {
+  const [
+    { data: recentBookings },
+    { data: recentProfiles }
+  ] = await Promise.all([
+    supabase
+      .from('bookings')
+      .select('*, car:cars(*), profile:profiles(username)')
+      .order('created_at', { ascending: false })
+      .limit(5),
+    supabase
+      .from('profiles')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(5)
+  ]);
+
+  const activities: RecentActivityItem[] = [];
+
+  if (recentBookings) {
+    recentBookings.forEach((b) => {
+      const name = b.guest_name || b.profile?.username || 'Pelanggan';
+      const carInfo = b.car ? `${b.car.brand} ${b.car.model}` : 'Mobil';
+      
+      // Booking creation activity
+      activities.push({
+        action: `Booking baru dari ${name} (${carInfo})`,
+        type: 'booking',
+        created_at: b.created_at
+      });
+
+      // Status updates activities
+      if (b.status === 'confirmed') {
+        activities.push({
+          action: `${carInfo} dikonfirmasi`,
+          type: 'confirm',
+          created_at: b.updated_at || b.created_at
+        });
+      } else if (b.status === 'completed') {
+        activities.push({
+          action: `Booking ${carInfo} selesai`,
+          type: 'complete',
+          created_at: b.updated_at || b.created_at
+        });
+      } else if (b.status === 'cancelled') {
+        activities.push({
+          action: `Booking ${carInfo} dibatalkan`,
+          type: 'cancel',
+          created_at: b.updated_at || b.created_at
+        });
+      }
+    });
+  }
+
+  if (recentProfiles) {
+    recentProfiles.forEach((p) => {
+      activities.push({
+        action: `User baru: ${p.username || 'Pengguna'}`,
+        type: 'user',
+        created_at: p.created_at
+      });
+    });
+  }
+
+  // Sort by created_at DESC and take top 5
+  return activities
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .slice(0, 5);
 }

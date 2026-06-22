@@ -108,10 +108,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="p-3 border-t border-slate-800">
           <div className="flex items-center gap-3 px-3 py-2 mb-1">
             <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-semibold">
-              {(profile?.full_name || user.email || 'A')[0].toUpperCase()}
+              {(profile?.username || user.email || 'A')[0].toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm text-white font-medium truncate">{profile?.full_name || 'Admin'}</p>
+              <p className="text-sm text-white font-medium truncate">{profile?.username || 'Admin'}</p>
               <p className="text-xs text-slate-500 truncate">{user.email}</p>
             </div>
           </div>

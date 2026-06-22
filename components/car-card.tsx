@@ -6,12 +6,15 @@ import { Users, Fuel, Settings, ArrowRight } from 'lucide-react';
 import type { Car } from '@/types';
 import { formatCurrency } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { useLanguage } from '@/hooks/use-language';
 
 interface CarCardProps {
   car: Car;
 }
 
 export default function CarCard({ car }: CarCardProps) {
+  const { locale } = useLanguage();
+
   return (
     <Link href={`/cars/detail?id=${car.id}`} className="group block">
       <div className="bg-white dark:bg-[#0A0A0A] rounded-[24px] overflow-hidden shadow-sm dark:shadow-none hover:shadow-2xl dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] hover:-translate-y-2 transition-all duration-500 border border-slate-200 dark:border-white/5 group-hover:border-primary/30 dark:group-hover:border-primary/30">
@@ -23,7 +26,7 @@ export default function CarCard({ car }: CarCardProps) {
                 <div key={i} className="w-full h-full shrink-0 snap-center relative">
                   <img
                     src={url}
-                    alt={`${car.brand} ${car.model} - Foto ${i + 1}`}
+                    alt={`${car.brand} ${car.model} - ${locale === 'id' ? 'Foto' : 'Photo'} ${i + 1}`}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]"
                   />
                   {/* Dots indicator */}
@@ -57,7 +60,9 @@ export default function CarCard({ car }: CarCardProps) {
                 : 'bg-red-50 dark:bg-red-900/80 text-red-600 dark:text-white'
               }`}
             >
-              {car.available ? 'Tersedia' : 'Disewa'}
+              {car.available 
+                ? (locale === 'id' ? 'Tersedia' : 'Available') 
+                : (locale === 'id' ? 'Disewa' : 'Rented')}
             </Badge>
           </div>
           <div className="absolute top-2 right-2 sm:top-4 sm:right-4">
@@ -92,12 +97,12 @@ export default function CarCard({ car }: CarCardProps) {
           >
             <div className="flex items-center gap-1 sm:gap-2">
               <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
-              <span>{car.seats}</span>
+              <span>{car.seats} {locale === 'id' ? 'Kursi' : 'Seats'}</span>
             </div>
             <div className="hidden sm:block w-1 h-1 rounded-full bg-slate-200 dark:bg-white/20" />
             <div className="flex items-center gap-1 sm:gap-2">
               <Settings className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
-              <span>{car.transmission === 'Automatic' ? 'Auto' : 'Manual'}</span>
+              <span>{car.transmission === 'Automatic' ? (locale === 'id' ? 'Otomatis' : 'Automatic') : 'Manual'}</span>
             </div>
             <div className="hidden sm:block w-1 h-1 rounded-full bg-slate-200 dark:bg-white/20" />
             <div className="flex items-center gap-1 sm:gap-2">
@@ -115,12 +120,16 @@ export default function CarCard({ car }: CarCardProps) {
             className="flex items-center justify-between pt-3 sm:pt-6 border-t border-slate-100 dark:border-white/5"
           >
             <div className="min-w-0">
-              <p className="text-[9px] sm:text-xs text-slate-400 dark:text-zinc-500 font-bold uppercase tracking-widest mb-0.5 sm:mb-1">Mulai Dari</p>
+              <p className="text-[9px] sm:text-xs text-slate-400 dark:text-zinc-500 font-bold uppercase tracking-widest mb-0.5 sm:mb-1">
+                {locale === 'id' ? 'Mulai Dari' : 'Starting From'}
+              </p>
               <div className="flex items-baseline gap-0.5 sm:gap-1 flex-wrap">
                 <span className="font-bold text-sm sm:text-2xl md:text-3xl text-slate-900 dark:text-white tracking-tighter truncate">
                   {formatCurrency(car.price_per_day)}
                 </span>
-                <span className="text-[10px] sm:text-sm text-slate-500 dark:text-zinc-500 font-medium">/hari</span>
+                <span className="text-[10px] sm:text-sm text-slate-500 dark:text-zinc-500 font-medium">
+                  {locale === 'id' ? '/hari' : '/day'}
+                </span>
               </div>
             </div>
             

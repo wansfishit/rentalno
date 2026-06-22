@@ -5,9 +5,11 @@ import { Instagram, Phone, MapPin, Mail, Facebook } from 'lucide-react';
 import Logo from '@/components/logo';
 import { useSiteSettings } from '@/hooks/use-site-settings';
 import { formatSocialLink, formatWhatsAppNumber } from '@/lib/utils';
+import { useLanguage } from '@/hooks/use-language';
 
 export default function Footer() {
   const { settings } = useSiteSettings();
+  const { locale, t } = useLanguage();
   
   const fbLink = settings?.social_facebook;
   const igLink = settings?.social_instagram;
@@ -28,7 +30,7 @@ export default function Footer() {
               <Logo size="sm" variant="blue" textClassName="text-slate-900 dark:text-white" />
             </Link>
             <p className="text-sm leading-relaxed mb-6 text-slate-500 dark:text-zinc-500 font-light">
-              Platform sewa mobil eksklusif dengan armada terbaik dan proses instan. Perjalanan mewah Anda dimulai di sini.
+              {t('footer.desc')}
             </p>
             <div className="flex items-center gap-3">
               {waLink && (
@@ -79,16 +81,16 @@ export default function Footer() {
               )}
             </div>
           </div>
-
+ 
           {/* Links */}
           <div>
-            <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-4">Layanan</h4>
+            <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-4">{t('footer.services')}</h4>
             <ul className="space-y-2.5 text-sm">
               {[
-                { href: '/cars', label: 'Katalog Mobil' },
-                { href: '/cars?category=MPV', label: 'MPV Family' },
+                { href: '/cars', label: locale === 'id' ? 'Katalog Mobil' : 'Car Catalog' },
+                { href: '/cars?category=MPV', label: locale === 'id' ? 'MPV Family' : 'Family MPV' },
                 { href: '/cars?category=SUV', label: 'SUV & Offroad' },
-                { href: '/cars?category=Luxury', label: 'Mobil Mewah' },
+                { href: '/cars?category=Luxury', label: locale === 'id' ? 'Mobil Mewah' : 'Luxury Cars' },
                 { href: '/cars?category=Sedan', label: 'Sedan' },
               ].map((link) => (
                 <li key={link.href}>
@@ -99,15 +101,15 @@ export default function Footer() {
               ))}
             </ul>
           </div>
-
+ 
           <div>
-            <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-4">Perusahaan</h4>
+            <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-4">{t('footer.company')}</h4>
             <ul className="space-y-2.5 text-sm">
               {[
-                { href: '/#how-it-works', label: 'Cara Kerja' },
-                { href: '/#faq', label: 'FAQ' },
-                { href: '/login', label: 'Masuk' },
-                { href: '/register', label: 'Daftar Gratis' },
+                { href: '/#how-it-works', label: t('navbar.how_it_works') },
+                { href: '/#faq', label: t('navbar.faq') },
+                { href: '/login', label: t('navbar.login') },
+                { href: '/register', label: locale === 'id' ? 'Daftar Gratis' : 'Register Free' },
               ].map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="hover:text-primary dark:hover:text-white transition-colors">
@@ -117,10 +119,10 @@ export default function Footer() {
               ))}
             </ul>
           </div>
-
+ 
           {/* Contact */}
           <div>
-            <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-4">Kontak</h4>
+            <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-4">{t('footer.contact')}</h4>
             <ul className="space-y-3 text-sm min-w-0">
               {phone && (
                 <li className="flex items-start gap-3 min-w-0">
@@ -155,14 +157,14 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-
+ 
         <div className="border-t border-slate-200 dark:border-white/5 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-slate-500 dark:text-zinc-500">
-            &copy; {new Date().getFullYear()} {settings?.site_title || 'RentAja'}. All rights reserved.
+            &copy; {new Date().getFullYear()} {settings?.site_title || 'RentAja'}. {t('footer.rights')}
           </p>
           <div className="flex items-center gap-6 text-sm">
-            <Link href="#" className="text-slate-500 dark:text-zinc-500 hover:text-primary transition-colors tracking-wide">Kebijakan Privasi</Link>
-            <Link href="#" className="text-slate-500 dark:text-zinc-500 hover:text-primary transition-colors tracking-wide">Syarat & Ketentuan</Link>
+            <Link href="#" className="text-slate-500 dark:text-zinc-500 hover:text-primary transition-colors tracking-wide">{t('footer.privacy')}</Link>
+            <Link href="#" className="text-slate-500 dark:text-zinc-500 hover:text-primary transition-colors tracking-wide">{t('footer.terms')}</Link>
           </div>
         </div>
       </div>

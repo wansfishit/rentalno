@@ -5,6 +5,7 @@ import { Toaster } from 'sonner';
 import { ThemeProvider } from '@/components/theme-provider';
 import { AuthProvider } from '@/hooks/use-auth';
 import { SettingsProvider } from '@/hooks/use-site-settings';
+import { LanguageProvider } from '@/hooks/use-language';
 import LiquidTabBar from '@/components/liquid-tab-bar';
 
 const jakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-jakarta' });
@@ -45,13 +46,15 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <SettingsProvider>
-            <AuthProvider>
-              <div className="pb-24 min-h-screen flex flex-col">
-                {children}
-              </div>
-              <LiquidTabBar />
-              <Toaster position="top-right" richColors closeButton />
-            </AuthProvider>
+            <LanguageProvider>
+              <AuthProvider>
+                <div className="pb-24 min-h-screen flex flex-col">
+                  {children}
+                </div>
+                <LiquidTabBar />
+                <Toaster position="top-right" richColors closeButton />
+              </AuthProvider>
+            </LanguageProvider>
           </SettingsProvider>
         </ThemeProvider>
       </body>

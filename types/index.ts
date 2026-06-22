@@ -18,18 +18,19 @@ export interface SiteSettings {
   contact_email: string | null;
   contact_location: string | null;
   faqs?: { q: string; a: string }[];
+  default_locale?: 'id' | 'en';
   updated_at: string;
 }
 
 export interface Profile {
   id: string;
-  full_name: string | null;
-  phone: string | null;
-  avatar_url: string | null;
+  username: string | null;
+  phone?: string | null;
+  avatar_url?: string | null;
   role: UserRole;
   discount_rate?: number | null;
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
 }
 
 export interface Car {

@@ -1,36 +1,37 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Logo from '@/components/logo';
-import { Car, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
-import { useAuth } from '@/hooks/use-auth';
 import { useSiteSettings } from '@/hooks/use-site-settings';
-
-const schema = z.object({
-  full_name: z.string().min(2, 'Nama minimal 2 karakter'),
-  email: z.string().email('Email tidak valid'),
-  password: z.string().min(6, 'Password minimal 6 karakter'),
-  confirm_password: z.string(),
-}).refine((d) => d.password === d.confirm_password, {
-  message: 'Password tidak cocok',
-  path: ['confirm_password'],
-});
-
-type FormData = z.infer<typeof schema>;
+import { useLanguage } from '@/hooks/use-language';
 
 export default function RegisterPage() {
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const { settings } = useSiteSettings();
+  const { locale, t } = useLanguage();
   const siteTitle = settings?.site_title || 'RentAja';
   const router = useRouter();
+
+  const schema = useMemo(() => z.object({
+    full_name: z.string().min(2, t('auth.name_min')),
+    email: z.string().email(t('auth.invalid_email')),
+    password: z.string().min(6, t('auth.password_min')),
+    confirm_password: z.string(),
+  }).refine((d) => d.password === d.confirm_password, {
+    message: t('auth.password_mismatch'),
+    path: ['confirm_password'],
+  }), [t]);
+
+  type FormData = z.infer<typeof schema>;
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -48,7 +49,7 @@ export default function RegisterPage() {
 
     if (error) {
       if (error.message.includes('already registered')) {
-        toast.error('Email sudah terdaftar. Silakan masuk.');
+        toast.error(locale === 'id' ? 'Email sudah terdaftar. Silakan masuk.' : 'Email is already registered. Please login.');
       } else {
         toast.error(error.message);
       }
@@ -56,7 +57,7 @@ export default function RegisterPage() {
       return;
     }
 
-    toast.success('Akun berhasil dibuat!');
+    toast.success(locale === 'id' ? 'Akun berhasil dibuat!' : 'Account successfully created!');
     router.push('/');
   };
 
@@ -72,9 +73,11 @@ export default function RegisterPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-slate-900/20" />
         <div className="absolute bottom-12 left-12 right-12">
           <p className="text-white text-xl font-semibold mb-2">
-            "Sewa mobil jadi lebih mudah dan transparan. Pilihan armada terbaik."
+            "{locale === 'id' ? 'Sewa mobil jadi lebih mudah dan transparan. Pilihan armada terbaik.' : 'Car rental made easier and transparent. Best fleet options.'}"
           </p>
-          <p className="text-white/80 text-sm">Bergabunglah dengan ribuan pelanggan puas {siteTitle}.</p>
+          <p className="text-white/80 text-sm">
+            {locale === 'id' ? `Bergabunglah dengan ribuan pelanggan puas ${siteTitle}.` : `Join thousands of satisfied ${siteTitle} customers.`}
+          </p>
         </div>
       </div>
 
@@ -88,19 +91,19 @@ export default function RegisterPage() {
           </div>
 
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-1.5">Buat akun baru</h1>
-            <p className="text-slate-500 dark:text-slate-400 text-sm">Gratis, tidak ada kartu kredit diperlukan</p>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-1.5">{t('auth.create_account')}</h1>
+            <p className="text-slate-500 dark:text-slate-400 text-sm">{t('auth.free_no_card')}</p>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                Nama Lengkap
+                {t('auth.full_name')}
               </label>
               <input
                 {...register('full_name')}
                 type="text"
-                placeholder="Nama Anda"
+                placeholder={locale === 'id' ? 'Nama Anda' : 'Your Name'}
                 className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
               />
               {errors.full_name && (
@@ -110,7 +113,7 @@ export default function RegisterPage() {
 
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                Email
+                {t('auth.email')}
               </label>
               <input
                 {...register('email')}
@@ -125,13 +128,13 @@ export default function RegisterPage() {
 
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                Password
+                {t('auth.password')}
               </label>
               <div className="relative">
                 <input
                   {...register('password')}
                   type={showPass ? 'text' : 'password'}
-                  placeholder="Minimal 6 karakter"
+                  placeholder={locale === 'id' ? 'Minimal 6 karakter' : 'At least 6 characters'}
                   className="w-full px-4 py-2.5 pr-11 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                 />
                 <button
@@ -149,12 +152,12 @@ export default function RegisterPage() {
 
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                Konfirmasi Password
+                {t('auth.confirm_password')}
               </label>
               <input
                 {...register('confirm_password')}
                 type="password"
-                placeholder="Ulangi password"
+                placeholder={t('auth.repeat_password')}
                 className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
               />
               {errors.confirm_password && (
@@ -168,14 +171,14 @@ export default function RegisterPage() {
               className="w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-              {loading ? 'Membuat akun...' : 'Daftar Sekarang'}
+              {loading ? t('auth.creating_account') : t('auth.register_now')}
             </button>
           </form>
 
           <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
-            Sudah punya akun?{' '}
+            {t('auth.have_account')}{' '}
             <Link href="/login" className="text-blue-600 dark:text-blue-400 font-medium hover:underline">
-              Masuk
+              {t('auth.login')}
             </Link>
           </p>
         </div>

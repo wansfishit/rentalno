@@ -17,6 +17,7 @@ import {
   DialogTrigger,
   DialogDescription,
 } from '@/components/ui/dialog';
+import { useLanguage } from '@/hooks/use-language';
 
 const gentleSpringTransition: Transition = {
   type: "spring",
@@ -46,6 +47,7 @@ const staggerContainer: Variants = {
 export default function ReviewsSection() {
   const { user, profile } = useAuth();
   const { settings } = useSiteSettings();
+  const { locale, t } = useLanguage();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
@@ -54,7 +56,7 @@ export default function ReviewsSection() {
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: {
-      guest_name: profile?.full_name || '',
+      guest_name: profile?.username || '',
       comment: '',
     }
   });
@@ -98,7 +100,7 @@ export default function ReviewsSection() {
 
   const onSubmit = async (data: any) => {
     if (!data.comment.trim()) {
-      toast.error('Ulasan tidak boleh kosong');
+      toast.error(locale === 'id' ? 'Ulasan tidak boleh kosong' : 'Review cannot be empty');
       return;
     }
     
@@ -107,18 +109,20 @@ export default function ReviewsSection() {
       rating,
       comment: data.comment,
       user_id: user ? user.id : null,
-      guest_name: user ? (profile?.full_name || user.email?.split('@')[0] || 'Pelanggan') : (data.guest_name || 'Guest'),
+      guest_name: user 
+        ? (profile?.username || user.email?.split('@')[0] || (locale === 'id' ? 'Pelanggan' : 'Customer')) 
+        : (data.guest_name || 'Guest'),
     };
 
     const { success } = await createReview(reviewData);
     if (success) {
-      toast.success('Terima kasih atas ulasan Anda!');
+      toast.success(locale === 'id' ? 'Terima kasih atas ulasan Anda!' : 'Thank you for your review!');
       setIsOpen(false);
       reset();
       setRating(5);
       fetchReviews(); // Refresh list
     } else {
-      toast.error('Gagal mengirim ulasan');
+      toast.error(locale === 'id' ? 'Gagal mengirim ulasan' : 'Failed to submit review');
     }
     setIsSubmitting(false);
   };
@@ -136,22 +140,32 @@ export default function ReviewsSection() {
       >
         <motion.div variants={fadeUpVariants} className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-16">
           <div>
-            <h2 className="text-4xl font-bold text-slate-900 dark:text-white tracking-tight">Ulasan Pelanggan</h2>
-            <p className="text-slate-600 dark:text-zinc-400 mt-3 font-light">Apa kata mereka yang sudah menggunakan layanan eksklusif kami.</p>
+            <h2 className="text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
+              {locale === 'id' ? 'Ulasan Pelanggan' : 'Customer Reviews'}
+            </h2>
+            <p className="text-slate-600 dark:text-zinc-400 mt-3 font-light">
+              {locale === 'id' 
+                ? 'Apa kata mereka yang sudah menggunakan layanan eksklusif kami.' 
+                : 'What they say about our exclusive services.'}
+            </p>
           </div>
           
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
               <button className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-bold uppercase tracking-widest rounded-full hover:shadow-[0_0_30px_rgba(214,175,54,0.3)] transition-all duration-300">
                 <MessageSquare className="w-4 h-4" />
-                Tulis Ulasan
+                {locale === 'id' ? 'Tulis Ulasan' : 'Write a Review'}
               </button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px] bg-white dark:bg-[#0A0A0A] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white shadow-2xl">
               <DialogHeader>
-                <DialogTitle className="text-slate-900 dark:text-white">Tulis Ulasan Anda</DialogTitle>
+                <DialogTitle className="text-slate-900 dark:text-white">
+                  {locale === 'id' ? 'Tulis Ulasan Anda' : 'Write Your Review'}
+                </DialogTitle>
                 <DialogDescription className="text-slate-500 dark:text-zinc-400">
-                  Bagikan pengalaman Anda menyewa mobil di {settings?.site_title || 'RentAja'}.
+                  {locale === 'id' 
+                    ? `Bagikan pengalaman Anda menyewa mobil di ${settings?.site_title || 'RentAja'}.` 
+                    : `Share your experience renting a car with ${settings?.site_title || 'RentAja'}.`}
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">
@@ -174,22 +188,26 @@ export default function ReviewsSection() {
 
                 {!user && (
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-slate-900 dark:text-white tracking-wide">Nama Anda</label>
+                    <label className="text-sm font-bold text-slate-900 dark:text-white tracking-wide">
+                      {locale === 'id' ? 'Nama Anda' : 'Your Name'}
+                    </label>
                     <input 
-                      {...register('guest_name', { required: 'Nama harus diisi' })}
+                      {...register('guest_name', { required: locale === 'id' ? 'Nama harus diisi' : 'Name is required' })}
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-primary bg-slate-50 dark:bg-black text-slate-900 dark:text-white"
-                      placeholder="Contoh: Budi Santoso"
+                      placeholder={locale === 'id' ? 'Contoh: Budi Santoso' : 'Example: John Doe'}
                     />
                     {errors.guest_name && <p className="text-xs text-red-500">{errors.guest_name.message}</p>}
                   </div>
                 )}
 
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-slate-900 dark:text-white tracking-wide">Ulasan</label>
+                  <label className="text-sm font-bold text-slate-900 dark:text-white tracking-wide">
+                    {locale === 'id' ? 'Ulasan' : 'Review'}
+                  </label>
                   <textarea 
-                    {...register('comment', { required: 'Ulasan harus diisi' })}
+                    {...register('comment', { required: locale === 'id' ? 'Ulasan harus diisi' : 'Review is required' })}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-primary bg-slate-50 dark:bg-black text-slate-900 dark:text-white min-h-[120px] resize-none"
-                    placeholder="Ceritakan pengalaman Anda..."
+                    placeholder={locale === 'id' ? 'Ceritakan pengalaman Anda...' : 'Tell us about your experience...'}
                   />
                   {errors.comment && <p className="text-xs text-red-500">{errors.comment.message}</p>}
                 </div>
@@ -199,7 +217,9 @@ export default function ReviewsSection() {
                   disabled={isSubmitting}
                   className="w-full py-3.5 bg-primary text-primary-foreground rounded-xl font-bold uppercase tracking-widest hover:shadow-[0_0_20px_rgba(214,175,54,0.3)] disabled:opacity-50 transition-all duration-300"
                 >
-                  {isSubmitting ? 'Mengirim...' : 'Kirim Ulasan'}
+                  {isSubmitting 
+                    ? (locale === 'id' ? 'Mengirim...' : 'Sending...') 
+                    : (locale === 'id' ? 'Kirim Ulasan' : 'Submit Review')}
                 </button>
               </form>
             </DialogContent>
@@ -225,7 +245,9 @@ export default function ReviewsSection() {
           </div>
         ) : reviews.length === 0 ? (
           <div className="text-center py-12 text-zinc-500 font-light">
-            Belum ada ulasan. Jadilah yang pertama memberikan ulasan!
+            {locale === 'id' 
+              ? 'Belum ada ulasan. Jadilah yang pertama memberikan ulasan!' 
+              : 'No reviews yet. Be the first to write a review!'}
           </div>
         ) : (
           <div 
@@ -246,7 +268,7 @@ export default function ReviewsSection() {
               `}} />
               <div className="hide-scroll h-full">
                 {reviews.map((review) => {
-                  const name = review.guest_name || 'Pelanggan';
+                  const name = review.guest_name || (locale === 'id' ? 'Pelanggan' : 'Customer');
                   const initial = name.charAt(0).toUpperCase();
                   
                   return (
@@ -267,7 +289,7 @@ export default function ReviewsSection() {
                         <div>
                           <p className="font-bold text-slate-900 dark:text-white text-sm tracking-wide">{name}</p>
                           <p className="text-xs text-slate-500 dark:text-zinc-500">
-                            {new Date(review.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}
+                            {new Date(review.created_at).toLocaleDateString(locale === 'id' ? 'id-ID' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                           </p>
                         </div>
                       </div>

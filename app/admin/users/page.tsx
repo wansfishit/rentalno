@@ -82,11 +82,11 @@ export default function AdminUsersPage() {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-semibold shrink-0">
-                          {(user.full_name || 'U')[0].toUpperCase()}
+                          {(user.username || 'U')[0].toUpperCase()}
                         </div>
                         <div>
                           <p className="text-sm font-medium text-slate-900 dark:text-white">
-                            {user.full_name || '—'}
+                            {user.username || '—'}
                           </p>
                         </div>
                       </div>

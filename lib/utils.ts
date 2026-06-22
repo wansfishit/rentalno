@@ -14,16 +14,16 @@ export function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
-export function formatDate(dateStr: string): string {
-  return new Intl.DateTimeFormat('id-ID', {
+export function formatDate(dateStr: string, locale: string = 'id'): string {
+  return new Intl.DateTimeFormat(locale === 'id' ? 'id-ID' : 'en-US', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
   }).format(new Date(dateStr));
 }
 
-export function formatDateShort(dateStr: string): string {
-  return new Intl.DateTimeFormat('id-ID', {
+export function formatDateShort(dateStr: string, locale: string = 'id'): string {
+  return new Intl.DateTimeFormat(locale === 'id' ? 'id-ID' : 'en-US', {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
@@ -47,7 +47,16 @@ export function getStatusColor(status: string): string {
   }
 }
 
-export function getStatusLabel(status: string): string {
+export function getStatusLabel(status: string, locale: string = 'id'): string {
+  if (locale === 'en') {
+    switch (status) {
+      case 'pending': return 'Pending';
+      case 'confirmed': return 'Confirmed';
+      case 'completed': return 'Completed';
+      case 'cancelled': return 'Cancelled';
+      default: return status;
+    }
+  }
   switch (status) {
     case 'pending': return 'Menunggu';
     case 'confirmed': return 'Dikonfirmasi';

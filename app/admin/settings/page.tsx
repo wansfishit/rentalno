@@ -110,6 +110,19 @@ export default function AdminSettingsPage() {
             </div>
 
             <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Bahasa Utama Website (Default Language)</label>
+              <select
+                value={formData.default_locale || 'id'}
+                onChange={(e) => setFormData({ ...formData, default_locale: e.target.value as 'id' | 'en' })}
+                className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="id">Bahasa Indonesia (ID)</option>
+                <option value="en">English (EN)</option>
+              </select>
+              <p className="text-xs text-slate-500 mt-1">Bahasa utama yang otomatis aktif saat pertama kali pengunjung membuka website.</p>
+            </div>
+
+            <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Logo Website</label>
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden">
